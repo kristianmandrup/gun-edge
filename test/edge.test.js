@@ -62,7 +62,7 @@ test('edge', t => {
 
 test('full edge', t => {
   const amber = gun.get('person/alice').put(amber)
-  amber.out(fullEdge)
+  amber.edge(fullEdge)
 
   t.is(1, 1)
 })
