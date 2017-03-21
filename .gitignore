@@ -2,3 +2,4 @@ dist
 *.log
 .vscode
 node_modules
+data.json

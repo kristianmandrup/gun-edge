@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <!-- Boilerplate HTML -->
+  <meta charset="utf-8">
+  <title>Hello World - GUN</title>
+</head>
+
+<body>
+
+  <!-- Loads the GUN library -->
+  <script src="https://cdn.rawgit.com/amark/gun/master/gun.js"></script>
+
+  <script>
+    // We're not connecting to any peers
+    // just yet...
+    var peers = [];
+    var gun = Gun(peers);
+
+    // Create an interface for the `greetings`
+    // key, storing it in a variable.
+    var greetings = gun.get('greetings');
+
+    // Update the value on `greetings`.
+    greetings.put({
+      hello: 'world'
+    });
+
+    // Read the value and listen for
+    // any changes.
+    greetings.on(function (data) {
+      console.log('Update!', data)
+    })
+  </script>
+</body>
+
+</html>
