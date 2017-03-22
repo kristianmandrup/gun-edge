@@ -27,4 +27,10 @@ const cb = (val) => {
 }
 
 gun.get('amber').get('spouse').get('outin').val(cb)
+
+// shorthand
+// gun.get('amber').out('spouse')
+
 gun.get('mark').get('spouse').get('inout').val(cb)
+// shorthand
+// gun.get('mark').out('spouse')

@@ -17,39 +17,49 @@
 
 // travels an edge to another node
 // tests that the property is an edge
-export const out = (property) => {
-  const gun = this
-  const self = gun.back()
-  const selfId = Gun.node.soul(self)
-  console.log('property', property)
-  console.log('self', self, selfId)
 
-  return gun.get(property).val((edge) => {
-    const propId = Gun.node.soul(edge)
-    console.log('soul prop', propId)
-    // only if not referencing to self
-    if (propId !== selfId) {
-      // add the edge
-      if (edge.type == 'edge') {
-        return edge.inout
-      }
-    }
-  })
+// gun.get('amber').get('spouse').get('outin').val(cb)
+
+// shorthand
+// gun.get('amber').out('spouse')
+
+import Gun from 'gun/gun'
+
+// get('spouse').get('inout').val(cb)
+const calcOut = (selfId, edge, v) => {
+  const inout = edge.get('inout')
+  const propId = Gun.node.soul(v)
+  // // only if not referencing to self
+  if (propId !== selfId) {
+    return inout
+  } else {
+    return edge.get('outin')
+  }
 }
 
-export const edge = (name, edge) => {
-  const gun = this
+export async function out(property) {
+  console.log('OUT', property)
+  const selfId = Gun.node.soul(this)
+  const edge = this.get(property)
 
-  const name = edge.name
-  const from = edge.from
-  const to = edge.outin
-  console.log('add edge', edge, 'from', from, 'to', to)
-
-  from.put({
-    [name]: edge
-  })
-
-  to.put({
-    [name]: edge
-  })
+  const edgeNode = await edge.valAsync()
+  let res = calcOut(selfId, edge, edgeNode)
+  return await res.valueAsync()
 }
+
+// export const edge = (property, edge) => {
+//   const gun = this
+
+//   const name = edge.name
+//   const from = edge.from
+//   const to = edge.outin
+//   console.log('add edge', edge, 'from', from, 'to', to)
+
+//   from.put({
+//     [name]: edge
+//   })
+
+//   to.put({
+//     [name]: edge
+//   })
+// }

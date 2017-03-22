@@ -37,17 +37,29 @@ mark.get('spouse').put(edge);
 
 // now that will let you traverse with the raw gun API any direction:
 
-gun.get('amber').get('spouse').get('outin').val(cb) // mark
-gun.get('mark').get('spouse').get('inout').val(cb) // amber.
+await gun.get('amber').get('spouse').get('outin').valAsync() // mark
+gun.get('mark').get('spouse').get('inout').valAsync() // amber.
 
-// The goal of this gun extension is to make this
-// process easier - rather than writing those 7 or 9 lines of code every time
-// for everything, you just call the extension and it does it
-// for you.
-// And the most important piece with the extension,
-// would be to intelligently determine that "mark.spouse"
-// means inout, and "amber.spouse" means outin.
-// I propose the methods are named like this:
+// Added val and value methods to work with async/await and ES6 Promise
+
+// WORKS
+let amberAwait = await gun.get('mark').get('spouse').get('inout').valueAsync()
+gun.get('mark').get('spouse').get('inout').valueAsync()
+  .then(node => {
+    t.is(amberAwait, node)
+  })
+
+// WORKS
+test('out', async t => {
+  let amberLong = await gun.get('mark').get('spouse').get('inout').valueAsync()
+  // shorthand
+  let amberShort = await gun.get('mark').out('spouse')
+  // same result :)
+  t.is(amberLong, amberShort)
+})
+
+// TODO...
+
 gun.get('mark').edge('spouse', amber)
 
 // where amber is a gun reference.
@@ -57,13 +69,17 @@ gun.get('mark').edge('spouse', {
 
 // where second parameter is a plain object, it updates the edge itself
 // (not what the edge is pointing to).
-gun.get('mark').edge('spouse') // winds up returning a reference to amber.
-gun.get('mark').edge('spouse', function () {}) // winds up getting called with the edge data itself.
+
+// returns a reference to amber. (ie edge traversal)
+gun.get('mark').edge('spouse')
+
+// called with the edge data itself.
+gun.get('mark').edge('spouse', function () {})
 ```
 
 ## TODO
 
-Make it work!
+Make it all work!
 
 ## Future
 

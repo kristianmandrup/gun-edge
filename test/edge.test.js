@@ -2,25 +2,7 @@ import Gun from 'gun/gun'
 import test from 'ava'
 import '../src'
 
-let mark = {
-  name: "mark"
-};
-
-let amber = {
-  name: "amber"
-};
-
-mark.spouse = edge
-amber.spouse = edge
-
-let edge = {
-  type: 'edge',
-  year: 2014,
-  in: mark,
-  out: amber
-}
-
-// The GOAL
+const gun = Gun();
 
 var amber = gun.get('amber').put({
   name: "amber"
@@ -31,50 +13,47 @@ var mark = gun.get('mark').put({
 var edge = gun.put({
   married: 2014
 });
+
+import '../src/value'
+import '../src/async/val'
+
+const cb = node => node
+
 edge.get('inout').put(amber);
 edge.get('outin').put(mark);
 amber.get('spouse').put(edge);
 mark.get('spouse').put(edge);
 
-// now that will let you traverse with the raw gun API any direction:
+Gun.chain.valAsync = function (opt) {
+  var self = this
+  return new Promise(function (resolve, reject) {
+    self.val(resolve, opt)
+  });
+}
 
-gun.get('amber').get('spouse').get('outin').val(cb) // mark
-gun.get('mark').get('spouse').get('inout').val(cb) // amber.
+Gun.chain.valueAsync = function (opt) {
+  var self = this
+  return new Promise(function (resolve, reject) {
+    self.value(resolve, opt)
+  });
+}
 
-// The goal of a gun extension is to make this
-// process easier - rather than writing those 7 or 9 lines of code every time
-// for everything, you just call the extension and it does it
-// for you.
-// And the most important piece with the extension,
-// would be to intelligently determine that "mark.spouse"
-// means inout, and "amber.spouse" means outin.
-// I propose the methods are named like this:
-gun.get('mark').edge('spouse', amber)
-
-// where amber is a gun reference.
-gun.get('mark').edge('spouse', {
-  married: 2014
+test('valueAsync', async t => {
+  let amberAwait = await gun.get('mark').get('spouse').get('inout').valueAsync()
+  let amberThen = gun.get('mark').get('spouse').get('inout').valueAsync()
+    .then(v => {
+      console.log('value', v)
+      t.is(amberAwait, v)
+    })
+  console.log('amberAwait', amberAwait)
+  t.is(amberAwait.name, 'amber')
 })
 
-// where second parameter is a plain object, it updates the edge itself
-// (not what the edge is pointing to).
-gun.get('mark').edge('spouse') // winds up returning a reference to amber.
-gun.get('mark').edge('spouse', function () {}) // winds up getting called with the edge data itself.
-
-// MY EXPERIMENTS
-const gun = Gun();
-const amber = gun.get('person/amber').put(amber)
-const mark = gun.get('person/mark').put(mark)
-
-test('full edge', t => {
-  const amber = gun.get('person/amber').put(amber)
-  let edge = gun.edge('married', edge)
-
-  t.is(amber.married.year, edge.year)
-  t.is(mark.married.year, edge.year)
-})
-
-test('out makes connection to node referenced', t => {
-  let edgeNode = amber.out('person/mark')
-  t.is(edgeNode, mark)
+test('out', async t => {
+  // return a reference to amber.
+  let amberLong = await gun.get('mark').get('spouse').get('inout').valueAsync()
+  let amberShort = await gun.get('mark').out('spouse')
+  console.log('long', amberLong)
+  console.log('short', amberShort)
+  t.is(amberLong, amberShort)
 })
