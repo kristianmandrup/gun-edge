@@ -15,33 +15,41 @@
 // always having the overhead of an extra edge it has to jump through
 // [slows down performance just slightly] unless it is explicitly needed/wanted)
 
-export const out = (property, edge) => {
+// travels an edge to another node
+// tests that the property is an edge
+export const out = (property) => {
   const gun = this
   const self = gun.back()
   const selfId = Gun.node.soul(self)
-  let to = self
-
   console.log('property', property)
   console.log('self', self, selfId)
 
-  return gun.get(property).val((data) => {
-    const propId = Gun.node.soul(data)
+  return gun.get(property).val((edge) => {
+    const propId = Gun.node.soul(edge)
     console.log('soul prop', propId)
     // only if not referencing to self
     if (propId !== selfId) {
       // add the edge
       if (edge.type == 'edge') {
-        edge.inout
+        return edge.inout
       }
-      const to = gun.back()
-
     }
   })
-  return edge.get(to)
 }
 
-export const edge = (edge) => {
+export const edge = (name, edge) => {
   const gun = this
-  const from = gun.back()
-  console.log('add edge', edge, 'from', from)
+
+  const name = edge.name
+  const from = edge.from
+  const to = edge.outin
+  console.log('add edge', edge, 'from', from, 'to', to)
+
+  from.put({
+    [name]: edge
+  })
+
+  to.put({
+    [name]: edge
+  })
 }
