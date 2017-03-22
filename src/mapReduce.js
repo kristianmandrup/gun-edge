@@ -2,7 +2,9 @@ import './live'
 
 const log = console.log
 
+import Gun from 'gun/gun'
 
+Gun.chain.mapReduce = mapReduce
 
 export function mapReduce(bucket, {
   tfield,
@@ -60,7 +62,6 @@ export function mapReduce(bucket, {
     if (filter && filter(field, val)) {
       delField = true
     }
-    log('delField', field, delField)
 
     if (!visited[field]) {
       if (delField) {
