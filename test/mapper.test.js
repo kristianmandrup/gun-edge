@@ -49,8 +49,14 @@ test('mapAsync pub/sub', async t => {
     t.is(violet, 'violet')
   }
 
+  // remove any green field
+  const filter = (field, value) => {
+    return field === 'green'
+  }
+
   mapReduce(cols, {
     tfield: reverse,
-    tvalue: 'done'
+    tvalue: 'done',
+    filter
   }, cb)
 })

@@ -1,42 +1,54 @@
-import {
-  events
-} from './pubsub'
-
-import './async/map'
 import './live'
 
+// const log = console.log
 
 export function mapReduce(bucket, {
   tfield,
-  tvalue
+  tvalue,
+  filter
 }, cb) {
   if (tvalue && typeof tvalue !== 'function') {
     tvalue = (v) => v
   }
 
   let newProps = {}
+  let deleteFields = {}
   let visited = {}
   let updated = false
 
-  events.subscribe('doneVisit', function (newProps) {
+  function updateBucket(newProps) {
     bucket.put(newProps)
+
+    let deleteKeys = Object.keys(deleteFields)
+    if (deleteKeys.length > 0) {
+      for (let dkey of deleteKeys) {
+        bucket.get(dkey).put(null)
+      }
+    }
     if (cb) {
       cb(bucket)
     }
-    events.publish('doneUpdate', bucket)
-  })
+  }
 
   bucket.map().live(function (val, field) {
     let newKey = tfield ? tfield(field) : field
     let newValue = tvalue ? tvalue(val) : val
+    let delField = false
+    if (filter(field, val)) {
+      delField = field
+    }
     if (!visited[field]) {
-      visited[field] = true
-      visited[newKey] = true
-      newProps[newKey] = newValue
+      if (delField) {
+        deleteFields[delField] = true
+      } else {
+        visited[field] = true
+        visited[newKey] = true
+        newProps[newKey] = newValue
+      }
     } else {
       if (!updated) {
         updated = true
-        events.publish('doneVisit', newProps)
+        updateBucket(newProps)
       }
     }
   })

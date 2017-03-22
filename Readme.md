@@ -26,15 +26,21 @@ It works :)
     t.is(violet, 'violet')
   }
 
+  // remove any green field
+  const filter = (field, value) => {
+    return field === 'green'
+  }
+
   mapReduce(cols, {
     tfield: reverse,
-    tvalue: 'done'
+    tvalue: 'done',
+    filter
   }, cb)
 
 /*
 colors:: { violet: true,
   red: true,
-  green: false,
+  green: null,
   teloiv: true,
   der: true,
   neerg: false }
