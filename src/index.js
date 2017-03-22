@@ -1,8 +1,13 @@
-import {
-  out
-}
-from './chain'
-
-import Gun from 'gun/gun'
-
-Gun.chain.out = out
+import './async'
+import './create'
+import './date'
+import './each'
+import './edge'
+import './filter'
+import './live'
+import './local'
+import './mapReduce'
+import './no'
+import './out'
+import './recurse'
+import './value'

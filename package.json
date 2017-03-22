@@ -1,7 +1,7 @@
 {
   "name": "gun-edge",
-  "version": "1.0.0",
-  "description": "Gun edge DSL",
+  "version": "0.7.0",
+  "description": "Gun chain extensions for a higher level DSL and API",
   "main": "index.js",
   "scripts": {
     "test": "ava",
@@ -12,16 +12,16 @@
   "keywords": [
     "gun",
     "edge",
-    "db"
+    "db",
+    "dsl",
+    "api",
+    "extension",
+    "chaining"
   ],
   "author": "Kristian Mandrup",
   "license": "ISC",
   "dependencies": {
-    "gun": "^0.6.6",
-    "gun-level": "^4.0.1",
-    "level": "^1.6.0",
-    "levelgraph": "^2.0.1",
-    "levelgraph-jsonld": "^1.0.3"
+    "gun": "^0.6.6"
   },
   "devDependencies": {
     "ava": "^0.18.2",

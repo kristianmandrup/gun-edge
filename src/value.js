@@ -6,17 +6,3 @@ Gun.chain.value = function (cb, opt) {
     cb.call(this, val, field);
   }, opt);
 }
-
-Gun.chain.valueAsync = function (opt) {
-  var self = this
-  return new Promise(function (resolve, reject) {
-    self.value(resolve, opt)
-  });
-}
-
-Gun.chain.valueAt = function (at, opt) {
-  var self = this
-  return new Promise(function (resolve, reject) {
-    self.path(at).value(resolve, opt)
-  });
-}

@@ -1,0 +1,9 @@
+{
+  // package.json
+  "dependencies": {
+    "gun-level": "^4.0.1",
+    "level": "^1.6.0",
+    "levelgraph": "^2.0.1",
+    "levelgraph-jsonld": "^1.0.3"
+  }
+}

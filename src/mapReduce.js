@@ -4,7 +4,9 @@ const log = console.log
 
 import Gun from 'gun/gun'
 
-Gun.chain.mapReduce = mapReduce
+Gun.chain.mapReduce = function (opts, cb) {
+  mapReduce(this, opts, cb)
+}
 
 export function mapReduce(bucket, {
   tfield,

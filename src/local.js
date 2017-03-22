@@ -6,6 +6,6 @@ Gun.chain.local = function (data, cb, opt) {
   return this.put(data, cb, opt)
 }
 
-var gun = new Gun().get('example')
-gun.path('data').local(private)
-gun.path('data').put(synchronized)
+// var gun = new Gun().get('example')
+// gun.path('data').local(private)
+// gun.path('data').put(synchronized)

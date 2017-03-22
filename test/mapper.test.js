@@ -56,7 +56,14 @@ test('mapAsync pub/sub', async t => {
     }
   }
 
-  mapReduce(cols, {
+  // mapReduce(cols, {
+  //   tfield: reverse,
+  //   newValue: 'ready',
+  //   oldValue: (v) => 'done',
+  //   filters: [noColor('red'), noColor('green')]
+  // }, cb)
+
+  cols.mapReduce({
     tfield: reverse,
     newValue: 'ready',
     oldValue: (v) => 'done',
