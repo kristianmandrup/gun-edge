@@ -10,6 +10,10 @@ export function mapReduce(bucket, {
   tfield,
   tvalue
 }, cb) {
+  if (tvalue && typeof tvalue !== 'function') {
+    tvalue = (v) => v
+  }
+
   let newProps = {}
   let visited = {}
   let updated = false
@@ -22,13 +26,13 @@ export function mapReduce(bucket, {
     events.publish('doneUpdate', bucket)
   })
 
-  bucket.map().live(function (colorValue, field) {
-    let newKey = tfield(field)
-    let value = tvalue
+  bucket.map().live(function (val, field) {
+    let newKey = tfield ? tfield(field) : field
+    let newValue = tvalue ? tvalue(val) : val
     if (!visited[field]) {
       visited[field] = true
       visited[newKey] = true
-      newProps[newKey] = value
+      newProps[newKey] = newValue
     } else {
       if (!updated) {
         updated = true

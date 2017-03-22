@@ -6,6 +6,42 @@ Extra DSL convenience extensions for [Gun.js](http://gun.js.org/)
 
 `npm i -S gun-edge`
 
+## MapReduce
+
+It works :)
+
+```js
+  let cols = gun.get('colors')
+
+  let colors = cols.put({
+    violet: true,
+    red: true,
+    green: false
+  })
+
+  async function cb(bucket) {
+    let violet = await bucket.valueAt('violet')
+    console.log('colors::', await bucket.valueAsync())
+    console.log('violet::', violet)
+    t.is(violet, 'violet')
+  }
+
+  mapReduce(cols, {
+    tfield: reverse,
+    tvalue: 'done'
+  }, cb)
+
+/*
+colors:: { violet: true,
+  red: true,
+  green: false,
+  teloiv: true,
+  der: true,
+  neerg: false }
+violet:: true
+*/
+```
+
 ## Case study
 
 `Mark` and `Amber` were `married in 2014`
