@@ -12,24 +12,24 @@ import {
 
 const gun = Gun();
 
-test('mapAsync', async t => {
-  let cols = gun.get('colors')
-  let colors = cols.put({
-    violet: true,
-    red: true,
-    green: false
-  })
+// test('mapAsync', async t => {
+//   let cols = gun.get('colors')
+//   let colors = cols.put({
+//     violet: true,
+//     red: true,
+//     green: false
+//   })
 
-  let newColors = {}
-  cols.map().live(function (color, id) {
-    console.log(color, id)
-    newColors[id + '2'] = 'done'
-  });
+//   let newColors = {}
+//   cols.map().live(function (color, id) {
+//     console.log(color, id)
+//     newColors[id + '2'] = 'done'
+//   });
 
-  cols.put(newColors)
-  console.log('colors::', await cols.valueAsync())
-  console.log('violet::', await cols.valueAt('violet'))
-})
+//   cols.put(newColors)
+//   console.log('colors::', await cols.valueAsync())
+//   console.log('violet::', await cols.valueAt('violet'))
+// })
 
 test('mapAsync pub/sub', async t => {
   let cols = gun.get('colors')
@@ -43,42 +43,42 @@ test('mapAsync pub/sub', async t => {
     return str.split("").reverse().join("");
   }
 
-  let signalled = false
-
-  function signalDone(data) {
-    if (!signalled) {
-      console.log('send:: signal done')
-      events.publish('done', data)
-      signalled = true
-    }
-  }
-
+  let newColors = {}
+  let visited = {}
+  let updated = false
   let printed = false
-  events.subscribe('done', async function (cols) {
+
+  events.subscribe('doneUpdate', async function (cols) {
     if (!printed) {
       console.log('printing...')
       printed = true
+      let violet = await cols.valueAt('violet')
       console.log('colors::', await cols.valueAsync())
-      console.log('violet::', await cols.valueAt('violet'))
-      process.exit(1)
+      console.log('violet::', violet)
+      t.is(violet, 'violet')
     }
   })
 
-  let newColors = {}
-  cols.map().live(function (color, id) {
-    console.log(color, id)
-    let newKey = reverse(id)
+  events.subscribe('doneVisit', function (newColors) {
+    console.log('newColors', newColors, updated)
+    cols.put(newColors)
+    events.publish('doneUpdate', cols)
+  })
+
+  cols.map().live(function (colorValue, field) {
+    let newKey = reverse(field)
     let value = 'done'
-    console.log('new', newKey, value)
-    if (!newColors[newKey]) {
-      console.log('update')
+    if (!visited[field]) {
+      visited[field] = true
+      visited[newKey] = true
+      console.log('update', newKey)
       newColors[newKey] = value
-      cols.put({
-        [newKey]: value
-      })
     } else {
-      console.log('signal done')
-      signalDone(cols)
+      if (!updated) {
+        updated = true
+        console.log('signal done')
+        events.publish('doneVisit', newColors)
+      }
     }
-  });
+  })
 })
