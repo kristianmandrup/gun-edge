@@ -1,14 +1,17 @@
 import './live'
 
-// const log = console.log
+const log = console.log
 
 export function mapReduce(bucket, {
   tfield,
   tvalue,
   filter
 }, cb) {
+  let tvalueFun
   if (tvalue && typeof tvalue !== 'function') {
-    tvalue = (v) => v
+    tvalueFun = (v) => tvalue
+  } else {
+    tvalueFun = tvalue
   }
 
   let newProps = {}
@@ -17,6 +20,7 @@ export function mapReduce(bucket, {
   let updated = false
 
   function updateBucket(newProps) {
+    // log('newProps', newProps)
     bucket.put(newProps)
 
     let deleteKeys = Object.keys(deleteFields)
@@ -32,7 +36,7 @@ export function mapReduce(bucket, {
 
   bucket.map().live(function (val, field) {
     let newKey = tfield ? tfield(field) : field
-    let newValue = tvalue ? tvalue(val) : val
+    let newValue = tvalueFun ? tvalueFun(val) : val
     let delField = false
     if (filter(field, val)) {
       delField = field

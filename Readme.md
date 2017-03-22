@@ -11,20 +11,19 @@ Extra DSL convenience extensions for [Gun.js](http://gun.js.org/)
 It works :)
 
 ```js
-  let cols = gun.get('colors')
-
-  let colors = cols.put({
-    violet: true,
-    red: true,
-    green: false
-  })
-
   async function cb(bucket) {
     let violet = await bucket.valueAt('violet')
     console.log('colors::', await bucket.valueAsync())
     console.log('violet::', violet)
     t.is(violet, 'violet')
   }
+
+  let cols = gun.get('colors')
+  let colors = cols.put({
+    violet: true,
+    red: true,
+    green: false
+  })
 
   // remove any green field
   const filter = (field, value) => {
