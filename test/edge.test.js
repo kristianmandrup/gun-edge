@@ -38,22 +38,61 @@ Gun.chain.valueAsync = function (opt) {
   });
 }
 
-test('valueAsync', async t => {
-  let amberAwait = await gun.get('mark').get('spouse').get('inout').valueAsync()
-  let amberThen = gun.get('mark').get('spouse').get('inout').valueAsync()
-    .then(v => {
-      console.log('value', v)
-      t.is(amberAwait, v)
-    })
-  console.log('amberAwait', amberAwait)
-  t.is(amberAwait.name, 'amber')
+// test('valueAsync', async t => {
+//   let amberAwait = await gun.get('mark').get('spouse').get('inout').valueAsync()
+//   let amberThen = gun.get('mark').get('spouse').get('inout').valueAsync()
+//     .then(v => {
+//       console.log('value', v)
+//       t.is(amberAwait, v)
+//     })
+//   console.log('amberAwait', amberAwait)
+//   t.is(amberAwait.name, 'amber')
+// })
+
+// import '../src/filter'
+import '../src/async/map'
+import '../src/live'
+
+test('mapAsync', async t => {
+
+  let cols = gun.get('colors')
+  let colors = cols.put({
+    violet: true,
+    red: true,
+    green: false
+  })
+
+  let newColors = {}
+  cols.map().live(function (color, id) {
+    console.log(color, id)
+    newColors[id + '2'] = 'done'
+  });
+
+  cols.put(newColors)
+  console.log('colors::', await cols.valueAsync())
+  console.log('violet::', await cols.valueAt('violet'))
 })
 
-test('out', async t => {
-  // return a reference to amber.
-  let amberLong = await gun.get('mark').get('spouse').get('inout').valueAsync()
-  let amberShort = await gun.get('mark').out('spouse')
-  console.log('long', amberLong)
-  console.log('short', amberShort)
-  t.is(amberLong, amberShort)
-})
+// test('filter', async t => {
+//   // return a reference to amber.
+//   let colors = gun.get('colors').put({
+//     violet: true,
+//     red: true,
+//     green: false
+//   }) //.valueAsync()
+
+//   let goodColors = await colors.filter(c => c === true)
+//   console.log('goodColors', goodColors)
+
+// })
+
+// test('out', async t => {
+//   // return a reference to amber.
+//   let amberLong = await gun.get('mark').get('spouse').get('inout').valueAsync()
+//   let amberShort = await gun.get('mark').out({
+//     spouse: 'inout'
+//   })
+//   console.log('long', amberLong)
+//   console.log('short', amberShort)
+//   t.is(amberLong, amberShort)
+// })

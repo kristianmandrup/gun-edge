@@ -13,3 +13,10 @@ Gun.chain.valueAsync = function (opt) {
     self.value(resolve, opt)
   });
 }
+
+Gun.chain.valueAt = function (at, opt) {
+  var self = this
+  return new Promise(function (resolve, reject) {
+    self.path(at).value(resolve, opt)
+  });
+}

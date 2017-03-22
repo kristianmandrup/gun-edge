@@ -50,7 +50,7 @@ gun.get('mark').get('spouse').get('inout').valueAsync()
 test('out', async t => {
   let amberLong = await gun.get('mark').get('spouse').get('inout').valueAsync()
   // shorthand
-  let amberShort = await gun.get('mark').out('spouse')
+  let amberShort = await gun.get('mark').out({spouse: 'inout'})
   // same result :)
   t.is(amberLong, amberShort)
 })

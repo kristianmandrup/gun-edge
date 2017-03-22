@@ -24,26 +24,49 @@
 // gun.get('amber').out('spouse')
 
 import Gun from 'gun/gun'
+import './value'
 
 // get('spouse').get('inout').val(cb)
-const calcOut = (selfId, edge, v) => {
-  const inout = edge.get('inout')
+async function calcOut(selfId, out, edge, v) {
+  const def = edge.get(out)
   const propId = Gun.node.soul(v)
   // // only if not referencing to self
   if (propId !== selfId) {
-    return inout
+    return def
   } else {
-    return edge.get('outin')
+    // find first other property that references a valid Object
+    return edge.map().val(function (data) {
+      if ((data instanceof Object)) {
+        let id = Gun.node.soul(data)
+        if (id != selfId) {
+          return data
+        }
+      }
+    })
   }
 }
 
-export async function out(property) {
-  console.log('OUT', property)
+/*
+await gun.get('mark').out({
+  spouse: 'bride'
+})
+*/
+export async function out(navigation) {
+  console.log('nav', navigation)
+  if (typeof navigation === 'string') {
+    navigation = {
+      [navigation]: navigation
+    }
+  }
+  console.log('NAV', navigation)
+  const key = Object.keys(navigation)[0]
+  const out = Object.values(navigation)[0]
+
   const selfId = Gun.node.soul(this)
-  const edge = this.get(property)
+  const edge = this.get(key)
 
   const edgeNode = await edge.valAsync()
-  let res = calcOut(selfId, edge, edgeNode)
+  let res = calcOut(selfId, out, edge, edgeNode)
   return await res.valueAsync()
 }
 
