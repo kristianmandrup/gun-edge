@@ -26,6 +26,17 @@
 import Gun from 'gun/gun'
 import './value'
 
+const instOf = (clazz = Object) => {
+  return (val) => {
+    return val instanceof clazz
+  }
+}
+
+const notOriginator = (selfId) => {
+  return data => selfid !== Gun.node.soul(data)
+}
+
+
 // get('spouse').get('inout').val(cb)
 async function calcOut(selfId, out, edge, v) {
   const def = edge.get(out)
@@ -35,13 +46,8 @@ async function calcOut(selfId, out, edge, v) {
     return def
   } else {
     // find first other property that references a valid Object
-    return edge.map().val(function (data) {
-      if ((data instanceof Object)) {
-        let id = Gun.node.soul(data)
-        if (id != selfId) {
-          return data
-        }
-      }
+    return mapReduce(edge, {
+      filters: [instOf(Object), notOriginator(selfId)]
     })
   }
 }

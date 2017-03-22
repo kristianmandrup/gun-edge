@@ -8,7 +8,8 @@ export function mapReduce(bucket, {
   tfield,
   newValue,
   oldValue,
-  filter
+  filter,
+  filters
 }, cb) {
 
   function ensureFun(tvalue) {
@@ -49,12 +50,21 @@ export function mapReduce(bucket, {
     let newValue = newValueFun ? newValueFun(val) : val
     let oldValue = oldValueFun ? oldValueFun(val) : val
     let delField = false
-    if (filter(field, val)) {
-      delField = field
+
+    if (filters) {
+      delField = filters.reduce((filtered, filter) => {
+        return !filtered ? filter(field, val) : filtered
+      }, false)
     }
+
+    if (filter && filter(field, val)) {
+      delField = true
+    }
+    log('delField', field, delField)
+
     if (!visited[field]) {
       if (delField) {
-        deleteFields[delField] = true
+        deleteFields[field] = true
       } else {
         visited[field] = true
         visited[newKey] = true
