@@ -50,28 +50,6 @@ Gun.chain.valueAsync = function (opt) {
 // })
 
 // import '../src/filter'
-import '../src/async/map'
-import '../src/live'
-
-test('mapAsync', async t => {
-
-  let cols = gun.get('colors')
-  let colors = cols.put({
-    violet: true,
-    red: true,
-    green: false
-  })
-
-  let newColors = {}
-  cols.map().live(function (color, id) {
-    console.log(color, id)
-    newColors[id + '2'] = 'done'
-  });
-
-  cols.put(newColors)
-  console.log('colors::', await cols.valueAsync())
-  console.log('violet::', await cols.valueAt('violet'))
-})
 
 // test('filter', async t => {
 //   // return a reference to amber.
