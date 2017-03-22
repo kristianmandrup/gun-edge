@@ -34,6 +34,13 @@ import {
 } from '../src/mapReduce'
 
 test('mapAsync pub/sub', async t => {
+  async function cb(bucket) {
+    let violet = await bucket.valueAt('violet')
+    console.log('colors::', await bucket.valueAsync())
+    console.log('violet::', violet)
+    t.is(violet, 'violet')
+  }
+
   let cols = gun.get('colors')
 
   let colors = cols.put({
@@ -42,13 +49,6 @@ test('mapAsync pub/sub', async t => {
     green: false
   })
 
-  async function cb(bucket) {
-    let violet = await bucket.valueAt('violet')
-    console.log('colors::', await bucket.valueAsync())
-    console.log('violet::', violet)
-    t.is(violet, 'violet')
-  }
-
   // remove any green field
   const filter = (field, value) => {
     return field === 'green'
@@ -56,7 +56,8 @@ test('mapAsync pub/sub', async t => {
 
   mapReduce(cols, {
     tfield: reverse,
-    tvalue: 'done',
+    newValue: 'ready',
+    oldValue: (v) => 'done',
     filter
   }, cb)
 })

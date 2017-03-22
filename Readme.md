@@ -11,39 +11,48 @@ Extra DSL convenience extensions for [Gun.js](http://gun.js.org/)
 It works :)
 
 ```js
-  async function cb(bucket) {
-    let violet = await bucket.valueAt('violet')
-    console.log('colors::', await bucket.valueAsync())
-    console.log('violet::', violet)
-    t.is(violet, 'violet')
-  }
+import {
+  mapReduce
+} from './mapReduce'
 
-  let cols = gun.get('colors')
-  let colors = cols.put({
-    violet: true,
-    red: true,
-    green: false
-  })
+function reverse(str) {
+  return str.split("").reverse().join("");
+}
 
-  // remove any green field
-  const filter = (field, value) => {
-    return field === 'green'
-  }
+async function cb(bucket) {
+  let violet = await bucket.valueAt('violet')
+  console.log('colors::', await bucket.valueAsync())
+  console.log('violet::', violet)
+  t.is(violet, 'violet')
+}
 
-  mapReduce(cols, {
-    tfield: reverse,
-    tvalue: 'done',
-    filter
-  }, cb)
+let cols = gun.get('colors')
+
+let colors = cols.put({
+  violet: true,
+  red: true,
+  green: false
+})
+
+// remove any green field
+const filter = (field, value) => {
+  return field === 'green'
+}
+
+mapReduce(cols, {
+  tfield: reverse,
+  newValue: 'ready',
+  oldValue: (v) => 'done',
+  filter
+}, cb)
 
 /*
-colors:: { violet: true,
-  red: true,
+colors:: { violet: 'done',
+  red: 'done',
   green: null,
-  teloiv: true,
-  der: true,
-  neerg: false }
-violet:: true
+  teloiv: 'ready',
+  der: 'ready' }
+violet:: done
 */
 ```
 
