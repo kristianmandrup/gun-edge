@@ -1,18 +1,14 @@
 # Gun edge
 
-Edge DSL for [Gun.js](http://gun.js.org/)
+Extra DSL convenience extensions for [Gun.js](http://gun.js.org/)
 
 ## Install
 
-`npm i gun-edge`
+`npm i -S gun-edge`
 
 ## Case study
 
 `Mark` and `Amber` were `married in 2014`
-
-The `gun-edge` DSL tries to facilitate making such a relationship in a Gun graph
-
-### Using the DSL
 
 ```js
 import Gun from 'gun/gun'
@@ -27,13 +23,14 @@ var amber = gun.get('amber').put({
 var mark = gun.get('mark').put({
   name: "mark"
 });
-var edge = gun.put({
+var link = gun.put({
   married: 2014
 });
-edge.get('inout').put(amber);
-edge.get('outin').put(mark);
-amber.get('spouse').put(edge);
-mark.get('spouse').put(edge);
+
+link.get('inout').put(amber);
+link.get('outin').put(mark);
+amber.get('spouse').put(link);
+mark.get('spouse').put(link);
 
 // now that will let you traverse with the raw gun API any direction:
 
@@ -58,28 +55,73 @@ test('out', async t => {
   t.is(amberLong, amberShort)
 })
 
+// We could also have the "Join node" instead have meaningful back references (edges)
+// - bride
+// - groom
+// But then how could we navigate? Then we would have to traverse all paths
+// pointing to objects that are not back to self and return first one!
+
+// create marriage link node
+marriage.get('bride').put(amber);
+marriage.get('groom').put(mark);
+
+// details on marriage
+amber.get('marriage').put(marriage);
+mark.get('marriage').put(marriage);
+
+// direct links
+amber.get('spouse').put(mark)
+mark.get('spouse').put(amber)
+
+// Much more meaningful!
+
 // TODO...
 
-gun.get('mark').edge('spouse', amber)
+gun.get('mark').link('married', marriage, {bride: amber})
+gun.get('amber').link('married', marriage, {groom: mark})
 
-// where amber is a gun reference.
-gun.get('mark').edge('spouse', {
+// The full monty!
+gun.link(['mark', 'amber'], {
+  married: {
+    // link node to be used/created
+    in: { year: 2014 }, // alternative using: node
+    with: {
+      // back references from link node
+      bride: 'amber',
+      groom: 'mark'
+    }
+  }
+})
+
+let marriage = gun.put({
   married: 2014
 })
 
-// where second parameter is a plain object, it updates the edge itself
-// (not what the edge is pointing to).
+// or [mark, amber]
+let sources = ['mark', 'amber']
 
-// returns a reference to amber. (ie edge traversal)
-gun.get('mark').edge('spouse')
-
-// called with the edge data itself.
-gun.get('mark').edge('spouse', function () {})
+gun.link(sources, {
+  married: {
+    // link node to be used/created
+    using: marriage,
+    with: {
+      // back references from link node
+      bride: 'amber', // or bride: amber
+      groom: 'mark'   // or bride: mark
+    }
+  }
+})
 ```
 
 ## TODO
 
 Make it all work!
+
+## Testing
+
+`npm test`
+
+or simply `ava`
 
 ## Future
 
