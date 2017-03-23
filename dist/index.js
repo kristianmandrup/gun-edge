@@ -10,6 +10,8 @@ require('./each');
 
 require('./edge');
 
+require('./fields');
+
 require('./filter');
 
 require('./live');
