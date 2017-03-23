@@ -1,4 +1,6 @@
 import './live'
+import './value'
+import './async'
 import './fields'
 
 import Gun from 'gun/gun'
@@ -7,31 +9,57 @@ Gun.chain.mapReduce = function (opts, cb) {
   mapReduce(this, opts, cb)
 }
 
-export function mapReduce(bucket, {
+export function mapReduce(bucket, options = {}, cb, putCb, opt) {
+
+  bucket.fields((allFields) => {
+    console.log('allFields', allFields)
+    options = Object.assign(options, {
+      allFields
+    })
+    doMapReduce(bucket, options, cb, putCb, opt)
+  })
+}
+
+function logger(fun, logging) {
+  return function _log(...args) {
+    if (logging)
+      console.log(fun, ...args)
+  }
+}
+
+function doMapReduce(bucket, {
   newField,
   newValue,
   value,
   filter,
   filters,
+  allFields,
   iterator = 'val',
   processWhile,
   updateWhen,
   logging = false
 }, cb, putCb, opt) {
 
-  let oldProps = {}
-  let newProps = {}
-  let deleteFields = {}
-  let visited = {}
-  let updated = false
-  let allFields = bucket.fields()
-  let processedFields = 0
+  let ctx = {
+    oldProps: {},
+    newProps: {},
+    deleteFields: {},
+    visited: {},
+    updated: false,
+    processedFields: 0,
+    allFields
+  }
+
+  const log = logger(iterator, logging)
+
+  log('ctx', ctx)
 
   function defaultProcessWhile({
     field,
-    val
+    val,
+    ctx
   }) {
-    let reVisit = visited[field]
+    let reVisit = ctx.visited[field]
     let decision = !reVisit
     log('processWhile', reVisit, decision)
     return decision
@@ -39,23 +67,15 @@ export function mapReduce(bucket, {
 
   function defaultUpdateWhen({
     field,
-    val
+    val,
+    ctx
   }) {
-    let processedAll = (processedFields >= allFields.length)
-    let visitedAll = allFields.every(f => visited[f])
+    let processedAll = (ctx.processedFields >= ctx.allFields.length)
+    let visitedAll = ctx.allFields.every(f => ctx.visited[f])
     let decision = visitedAll && processedAll
     log('updateWhen', visitedAll, processedAll, decision)
     return decision
   }
-
-  function logger(fun) {
-    return function _log(...args) {
-      if (logging)
-        console.log(fun, ...args)
-    }
-  }
-
-  const log = logger(iterator)
 
   processWhile = processWhile || defaultProcessWhile
   updateWhen = updateWhen || defaultUpdateWhen
@@ -72,13 +92,13 @@ export function mapReduce(bucket, {
   let newValueFun = ensureFun(newValue)
   let oldValueFun = ensureFun(value)
 
-  function updateBucket() {
-    log('put', oldProps)
-    bucket.put(oldProps, putCb, opt)
-    log('put', newProps)
-    bucket.put(newProps, putCb, opt)
+  function updateBucket(ctx) {
+    log('put', ctx.oldProps)
+    bucket.put(ctx.oldProps, putCb, opt)
+    log('put', ctx.newProps)
+    bucket.put(ctx.newProps, putCb, opt)
 
-    let deleteKeys = Object.keys(deleteFields)
+    let deleteKeys = Object.keys(ctx.deleteFields)
     if (deleteKeys.length > 0) {
       log('DELETE', deleteKeys)
       for (let dkey of deleteKeys) {
@@ -96,8 +116,8 @@ export function mapReduce(bucket, {
 
   log(allFields)
 
-  processWhile = processWhile.bind(this)
-  updateWhen = updateWhen.bind(this)
+  // processWhile = processWhile.bind(this)
+  // updateWhen = updateWhen.bind(this)
 
   bucket.map()[iterator](function (val, field) {
     log('iterate', {
@@ -129,7 +149,8 @@ export function mapReduce(bucket, {
 
     let doReduce = processWhile({
       field,
-      val
+      val,
+      ctx
     })
     log('doReduce', doReduce)
 
@@ -137,29 +158,30 @@ export function mapReduce(bucket, {
       log('reduce', {
         field,
         val,
-        processedFields
+        processedFields: ctx.processedFields
       })
       if (delField) {
-        deleteFields[field] = true
+        ctx.deleteFields[field] = true
       } else {
-        oldProps[field] = oldValue
-        newProps[newKey] = newValue
+        ctx.oldProps[field] = oldValue
+        ctx.newProps[newKey] = newValue
       }
-      visited[field] = true
-      visited[newKey] = true
-      processedFields++
+      ctx.visited[field] = true
+      ctx.visited[newKey] = true
+      ctx.processedFields++
     }
     let doUpdate = updateWhen({
       field,
-      val
+      val,
+      ctx
     })
-    log('doUpdate', doUpdate, processedFields)
+    log('doUpdate', doUpdate, ctx.processedFields)
     if (doUpdate) {
       // on stopCondition
-      if (!updated) {
+      if (!ctx.updated) {
         log('UPDATE BUCKET')
-        updated = true
-        updateBucket()
+        ctx.updated = true
+        updateBucket(ctx)
       } else {
         log('ignore update')
       }

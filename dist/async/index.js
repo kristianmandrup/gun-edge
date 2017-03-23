@@ -1,5 +1,7 @@
 'use strict';
 
+require('./fields');
+
 require('./map');
 
 require('./map-reduce');

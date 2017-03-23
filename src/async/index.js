@@ -1,3 +1,4 @@
+import './fields'
 import './map'
 import './map-reduce'
 import './val'

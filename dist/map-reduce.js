@@ -7,6 +7,10 @@ exports.mapReduce = mapReduce;
 
 require('./live');
 
+require('./value');
+
+require('./async');
+
 require('./fields');
 
 var _gun = require('gun/gun');
@@ -19,12 +23,41 @@ _gun2.default.chain.mapReduce = function (opts, cb) {
   mapReduce(this, opts, cb);
 };
 
-function mapReduce(bucket, _ref, cb, putCb, opt) {
+function mapReduce(bucket) {
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  var cb = arguments[2];
+  var putCb = arguments[3];
+  var opt = arguments[4];
+
+
+  bucket.fields(function (allFields) {
+    console.log('allFields', allFields);
+    options = Object.assign(options, {
+      allFields: allFields
+    });
+    doMapReduce(bucket, options, cb, putCb, opt);
+  });
+}
+
+function logger(fun, logging) {
+  return function _log() {
+    var _console;
+
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    if (logging) (_console = console).log.apply(_console, [fun].concat(args));
+  };
+}
+
+function doMapReduce(bucket, _ref, cb, putCb, opt) {
   var newField = _ref.newField,
       newValue = _ref.newValue,
       value = _ref.value,
       filter = _ref.filter,
       filters = _ref.filters,
+      allFields = _ref.allFields,
       _ref$iterator = _ref.iterator,
       iterator = _ref$iterator === undefined ? 'val' : _ref$iterator,
       processWhile = _ref.processWhile,
@@ -33,19 +66,26 @@ function mapReduce(bucket, _ref, cb, putCb, opt) {
       logging = _ref$logging === undefined ? false : _ref$logging;
 
 
-  var oldProps = {};
-  var newProps = {};
-  var deleteFields = {};
-  var visited = {};
-  var updated = false;
-  var allFields = bucket.fields();
-  var processedFields = 0;
+  var ctx = {
+    oldProps: {},
+    newProps: {},
+    deleteFields: {},
+    visited: {},
+    updated: false,
+    processedFields: 0,
+    allFields: allFields
+  };
+
+  var log = logger(iterator, logging);
+
+  log('ctx', ctx);
 
   function defaultProcessWhile(_ref2) {
     var field = _ref2.field,
-        val = _ref2.val;
+        val = _ref2.val,
+        ctx = _ref2.ctx;
 
-    var reVisit = visited[field];
+    var reVisit = ctx.visited[field];
     var decision = !reVisit;
     log('processWhile', reVisit, decision);
     return decision;
@@ -53,30 +93,17 @@ function mapReduce(bucket, _ref, cb, putCb, opt) {
 
   function defaultUpdateWhen(_ref3) {
     var field = _ref3.field,
-        val = _ref3.val;
+        val = _ref3.val,
+        ctx = _ref3.ctx;
 
-    var processedAll = processedFields >= allFields.length;
-    var visitedAll = allFields.every(function (f) {
-      return visited[f];
+    var processedAll = ctx.processedFields >= ctx.allFields.length;
+    var visitedAll = ctx.allFields.every(function (f) {
+      return ctx.visited[f];
     });
     var decision = visitedAll && processedAll;
     log('updateWhen', visitedAll, processedAll, decision);
     return decision;
   }
-
-  function logger(fun) {
-    return function _log() {
-      var _console;
-
-      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-      }
-
-      if (logging) (_console = console).log.apply(_console, [fun].concat(args));
-    };
-  }
-
-  var log = logger(iterator);
 
   processWhile = processWhile || defaultProcessWhile;
   updateWhen = updateWhen || defaultUpdateWhen;
@@ -95,13 +122,13 @@ function mapReduce(bucket, _ref, cb, putCb, opt) {
   var newValueFun = ensureFun(newValue);
   var oldValueFun = ensureFun(value);
 
-  function updateBucket() {
-    log('put', oldProps);
-    bucket.put(oldProps, putCb, opt);
-    log('put', newProps);
-    bucket.put(newProps, putCb, opt);
+  function updateBucket(ctx) {
+    log('put', ctx.oldProps);
+    bucket.put(ctx.oldProps, putCb, opt);
+    log('put', ctx.newProps);
+    bucket.put(ctx.newProps, putCb, opt);
 
-    var deleteKeys = Object.keys(deleteFields);
+    var deleteKeys = Object.keys(ctx.deleteFields);
     if (deleteKeys.length > 0) {
       log('DELETE', deleteKeys);
       var _iteratorNormalCompletion = true;
@@ -140,8 +167,8 @@ function mapReduce(bucket, _ref, cb, putCb, opt) {
 
   log(allFields);
 
-  processWhile = processWhile.bind(this);
-  updateWhen = updateWhen.bind(this);
+  // processWhile = processWhile.bind(this)
+  // updateWhen = updateWhen.bind(this)
 
   bucket.map()[iterator](function (val, field) {
     log('iterate', {
@@ -173,7 +200,8 @@ function mapReduce(bucket, _ref, cb, putCb, opt) {
 
     var doReduce = processWhile({
       field: field,
-      val: val
+      val: val,
+      ctx: ctx
     });
     log('doReduce', doReduce);
 
@@ -181,29 +209,30 @@ function mapReduce(bucket, _ref, cb, putCb, opt) {
       log('reduce', {
         field: field,
         val: val,
-        processedFields: processedFields
+        processedFields: ctx.processedFields
       });
       if (delField) {
-        deleteFields[field] = true;
+        ctx.deleteFields[field] = true;
       } else {
-        oldProps[field] = oldValue;
-        newProps[newKey] = newValue;
+        ctx.oldProps[field] = oldValue;
+        ctx.newProps[newKey] = newValue;
       }
-      visited[field] = true;
-      visited[newKey] = true;
-      processedFields++;
+      ctx.visited[field] = true;
+      ctx.visited[newKey] = true;
+      ctx.processedFields++;
     }
     var doUpdate = updateWhen({
       field: field,
-      val: val
+      val: val,
+      ctx: ctx
     });
-    log('doUpdate', doUpdate, processedFields);
+    log('doUpdate', doUpdate, ctx.processedFields);
     if (doUpdate) {
       // on stopCondition
-      if (!updated) {
+      if (!ctx.updated) {
         log('UPDATE BUCKET');
-        updated = true;
-        updateBucket();
+        ctx.updated = true;
+        updateBucket(ctx);
       } else {
         log('ignore update');
       }

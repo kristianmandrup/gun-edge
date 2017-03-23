@@ -45,15 +45,17 @@ gun chain methods
 - `.recurse(cb, filter)` - recursively navigate bucket graph/tree structure
 - `.value(cb, opt)` - get the node value (no meta)
 - `.valueAt(path, cb, opt)` : get value at the `path` (no meta)
-- `.fields()` - list of current field names (keys) in the bucket
+- `.localFields()` - get list of *local* field names (keys) in the bucket
+- `.fields(cb)` - return fields to cb
 
 Async methods (`Promise` or ES7 `async/await`). Prefix with `$`
 
-- `.$val(opt)` : async - full value (with meta)
-- `.$value(opt)` : async - get value (no meta)
-- `.$valueAt(path, opt)` : async - get value at the `path` (no meta)
-- `.$map(transform, opt)` : async - map and optionally transform (broken in gun?)
-- `.$mapReduce(options, putCb, opt)`: async - mapReduce
+- `.$fields(opt)` - get fields (ie. property names)
+- `.$val(opt)` - full value (with meta)
+- `.$value(opt)` - get value (no meta)
+- `.$valueAt(path, opt)` - get value at the `path` (no meta)
+- `.$map(transform, opt)` - map and optionally transform (broken in gun?)
+- `.$mapReduce(options, putCb, opt)` - mapReduce
 
 ## mapReduce
 

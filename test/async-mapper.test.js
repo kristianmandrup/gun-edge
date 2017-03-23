@@ -25,13 +25,15 @@ test('$mapReduce async/await', async t => {
     t.is(violet, 'done')
   }
 
-  let cols = gun.get('_colors')
-
+  let cols = gun.get('colors')
   let colors = cols.put({
     violet: true,
     red: true,
     green: false
   })
+
+  let cfields = await cols.$fields()
+  console.log('color fields', cfields)
 
   let reducedCols = await cols.$mapReduce({
     logging: true,

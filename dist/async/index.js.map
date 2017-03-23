@@ -1,1 +1,1 @@
-{"version":3,"sources":["async/index.js"],"names":[],"mappings":";;AAAA;;AACA;;AACA;;AACA","file":"index.js","sourcesContent":["import './map'\nimport './map-reduce'\nimport './val'\nimport './value'"]}
+{"version":3,"sources":["async/index.js"],"names":[],"mappings":";;AAAA;;AACA;;AACA;;AACA;;AACA","file":"index.js","sourcesContent":["import './fields'\nimport './map'\nimport './map-reduce'\nimport './val'\nimport './value'"]}
