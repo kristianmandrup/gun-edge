@@ -59,10 +59,19 @@ export function mapReduce(bucket, {
     }
   }
 
-  function log(fun, obj) {
-    if (logging)
-      console.log(fun, obj)
+  function logger(fun) {
+    return function _log(...args) {
+      if (logging)
+        console.log(fun, ...args)
+    }
   }
+
+  const log = logger(iterator)
+  var mp = bucket.map().val(v => v)
+  var map = Object.values(mp._.map)
+
+  let fields = Object.values(map).map(v => v.at.field)
+  log(fields)
 
   bucket.map()[iterator](function (val, field) {
     let newKey = newFieldFun ? newFieldFun(field, val) : field
@@ -70,7 +79,7 @@ export function mapReduce(bucket, {
     let oldValue = oldValueFun ? oldValueFun(val, field) : val
     let delField = false
 
-    log(iterator, {
+    log({
       newKey,
       newValue,
       oldValue

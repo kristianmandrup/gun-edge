@@ -66,7 +66,7 @@ test('mapAsync pub/sub', async t => {
   // }, cb)
 
   cols.mapReduce({
-    logging: false,
+    logging: true,
     newField: reverse,
     newValue: 'ready',
     value: (v) => 'done',

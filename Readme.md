@@ -85,6 +85,7 @@ let oldProps = {}
 let newProps = {}
 let deleteFields = {}
 let visited = {}
+let fields = [...] // the list of current field names
 ```
 
 The default stopCondition is:
