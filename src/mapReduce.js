@@ -1,4 +1,5 @@
 import './live'
+import './fields'
 
 import Gun from 'gun/gun'
 
@@ -67,10 +68,7 @@ export function mapReduce(bucket, {
   }
 
   const log = logger(iterator)
-  var mp = bucket.map().val(v => v)
-  var map = Object.values(mp._.map)
-
-  let fields = Object.values(map).map(v => v.at.field)
+  let fields = bucket.fields()
   log(fields)
 
   bucket.map()[iterator](function (val, field) {
@@ -78,12 +76,6 @@ export function mapReduce(bucket, {
     let newValue = newValueFun ? newValueFun(val, field) : val
     let oldValue = oldValueFun ? oldValueFun(val, field) : val
     let delField = false
-
-    log({
-      newKey,
-      newValue,
-      oldValue
-    })
 
     if (filters) {
       delField = filters.reduce((filtered, filter) => {
@@ -95,7 +87,13 @@ export function mapReduce(bucket, {
       delField = true
     }
 
-    log(delField)
+    log({
+      newKey,
+      newValue,
+      oldValue,
+      delete: delField
+    })
+
     stopCondition = stopCondition.bind(this)
 
     if (stopCondition({

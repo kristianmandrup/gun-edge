@@ -43,6 +43,7 @@ gun chain methods
 - `.out(navOpts)`
 - `.recurse(cb, filter)` - recursively navigate bucket graph/tree structure
 - `.value(cb, opt)` - get the node value (no meta)
+- `.fields()` - static list of current field names (keys) in the bucket
 
 Async methods (use via Promise or async/await)
 - `.valAsync(cb, opt)`: async - full value (with meta)
