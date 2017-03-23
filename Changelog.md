@@ -1,5 +1,12 @@
 ## Changelog
 
+### 0.7.1
+
+Improved mapReduce with:
+- `logging` (default: `false`)
+- `stopCondition` taking `({field, val})` to determine when to stop iterating
+- `iterator` method to use for map iteration (performs reduce in callback)
+
 ### 0.7.0
 
 First release:

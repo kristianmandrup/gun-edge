@@ -1,3 +1,5 @@
+import Gun from 'gun/gun'
+
 Gun.chain.valueAsync = function (cb, opt) {
   var self = this
   return new Promise(function (resolve, reject) {
@@ -9,7 +11,7 @@ Gun.chain.valueAsync = function (cb, opt) {
   });
 }
 
-Gun.chain.valueAt = function (at, cb, opt) {
+Gun.chain.valueAtAsync = function (at, cb, opt) {
   var self = this
   return self.path(at).valueAsync(cb, opt)
 }

@@ -1,7 +1,5 @@
 import './live'
 
-const log = console.log
-
 import Gun from 'gun/gun'
 
 Gun.chain.mapReduce = function (opts, cb) {
@@ -13,33 +11,47 @@ export function mapReduce(bucket, {
   newValue,
   value,
   filter,
-  filters
-}, cb) {
-
-  function ensureFun(tvalue) {
-    if (tvalue && typeof tvalue !== 'function') {
-      return (v) => tvalue
-    } else {
-      return tvalue
-    }
-  }
-
-  newFieldFun = ensureFun(newField)
-  let newValueFun = ensureFun(newValue)
-  let oldValueFun = ensureFun(value)
+  filters,
+  iterator = 'live',
+  stopCondition,
+  logging = false
+}, cb, putCb, opt) {
 
   let oldProps = {}
   let newProps = {}
   let deleteFields = {}
+  let visited = {}
+  let updated = false
+
+  function defaultStopCondition({
+    field,
+    val
+  }) {
+    return !visited[field]
+  }
+
+  stopCondition = stopCondition || defaultStopCondition
+
+  function ensureFun(fun) {
+    if (fun && typeof fun !== 'function') {
+      return (v) => fun
+    } else {
+      return fun
+    }
+  }
+
+  let newFieldFun = ensureFun(newField)
+  let newValueFun = ensureFun(newValue)
+  let oldValueFun = ensureFun(value)
 
   function updateBucket() {
-    bucket.put(oldProps)
-    bucket.put(newProps)
+    bucket.put(oldProps, putCb, opt)
+    bucket.put(newProps, putCb, opt)
 
     let deleteKeys = Object.keys(deleteFields)
     if (deleteKeys.length > 0) {
       for (let dkey of deleteKeys) {
-        bucket.get(dkey).put(null)
+        bucket.get(dkey).put(null, putCb, opt)
       }
     }
     if (cb) {
@@ -47,14 +59,22 @@ export function mapReduce(bucket, {
     }
   }
 
-  let visited = {}
-  let updated = false
+  function log(fun, obj) {
+    if (logging)
+      console.log(fun, obj)
+  }
 
-  bucket.map().live(function (val, field) {
+  bucket.map()[iterator](function (val, field) {
     let newKey = newFieldFun ? newFieldFun(field, val) : field
     let newValue = newValueFun ? newValueFun(val, field) : val
     let oldValue = oldValueFun ? oldValueFun(val, field) : val
     let delField = false
+
+    log(iterator, {
+      newKey,
+      newValue,
+      oldValue
+    })
 
     if (filters) {
       delField = filters.reduce((filtered, filter) => {
@@ -66,7 +86,12 @@ export function mapReduce(bucket, {
       delField = true
     }
 
-    if (!visited[field]) {
+    log(delField)
+
+    if (stopCondition({
+        field,
+        val
+      })) {
       if (delField) {
         deleteFields[field] = true
       } else {

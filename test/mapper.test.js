@@ -25,8 +25,10 @@ const gun = Gun();
 //   console.log('violet::', await cols.valueAt('violet'))
 // })
 
-function reverse(str) {
-  return str.split("").reverse().join("");
+import '../src/async'
+
+function reverse(str, val) {
+  return str ? str.split('').reverse().join('') : str
 }
 
 import {
@@ -35,7 +37,7 @@ import {
 
 test('mapAsync pub/sub', async t => {
   async function cb(bucket) {
-    let violet = await bucket.valueAt('violet')
+    let violet = await bucket.valueAtAsync('violet')
     console.log('colors::', await bucket.valueAsync())
     console.log('violet::', violet)
     t.is(violet, 'violet')
@@ -64,9 +66,10 @@ test('mapAsync pub/sub', async t => {
   // }, cb)
 
   cols.mapReduce({
-    tfield: reverse,
+    logging: false,
+    newField: reverse,
     newValue: 'ready',
-    oldValue: (v) => 'done',
+    value: (v) => 'done',
     filters: [noColor('red'), noColor('green')]
   }, cb)
 })

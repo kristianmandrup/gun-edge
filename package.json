@@ -6,7 +6,8 @@
   "scripts": {
     "test": "ava",
     "watch": "gulp watch",
-    "start": "gulp build",
+    "watch:b": "gulp watch:b",
+    "start": "gulp start",
     "build": "gulp build"
   },
   "keywords": [

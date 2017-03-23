@@ -6,3 +6,7 @@ Gun.chain.value = function (cb, opt) {
     cb.call(this, val, field);
   }, opt);
 }
+
+Gun.chain.valueAt = function (at, cb, opt) {
+  return this.path(at).value(cb, opt)
+}

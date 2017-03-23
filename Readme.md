@@ -38,17 +38,18 @@ gun chain methods
 - `.each()`
 - `.live(cb, opt)` - listen to new values like `on` but without the meta data
 - `.local(data, cb, opt)` - store locally only, no peer sync
-- `.mapReduce(opts, cb)` - mapReduce on a bucket (see below)
+- `.mapReduce(options, cb, putCb, opt)` - mapReduce on a bucket (see below)
 - `.no(cb)`
 - `.out(navOpts)`
 - `.recurse(cb, filter)` - recursively navigate bucket graph/tree structure
 - `.value(cb, opt)` - get the node value (no meta)
 
 Async methods (use via Promise or async/await)
-- `.valueAsync(cb, opt)` : async - get the value (no meta)
-- `.valueAt(path, cb, opt)` : async - get the value at the `path` (no meta)
+- `.valAsync(cb, opt)`: async - full value (with meta)
+- `.valueAsync(cb, opt)` : async - get value (no meta)
+- `.valueAt(path, cb, opt)` : async - get value at the `path` (no meta)
 - `.mapAsync(transform, opt)` : async - map and optionally transform (broken in gun?)
-- `.valAsync(cb, opt)`: async - value with meta
+- `.mapReduceAsync(options, cb, putCb, opt)`: async - mapReduce
 
 ## mapReduce
 
@@ -58,13 +59,22 @@ that receives the map-reduced (ie. transformed) bucket.
 
 ```js
 .mapReduce({
+  // stopCondition: function({field, val})
+  iterator: 'live', // default
+  logging: false, // default
   newField: reverse, // or string
   newValue: 'ready', // or function
   value: (val, field) => 'done', // or string
   filter: noColor('blue'),
   filters: [noColor('red'), noColor('green')]
-}, cb)
+}, cb, [putCb], [opt])
 ```
+
+### Arguments
+
+callback `cb` is called when done. Arguments: `putCb` and `opt`  are optional.
+`putCb` is used on any internal `put`, including delete (ie. `put(null)`)
+`opt` is the typical Gun opt for controlling sync/storage.
 
 **Usage Example**
 
@@ -119,18 +129,32 @@ TODO: Add Promise variant
 
 ## Contributing
 
-### Compile
+### Compile/Build
 
-This project includes a `gulpfile` configured to use Babel 6.
+The project includes a `gulpfile` configured to use Babel 6.
 All `/src` files are compiled to `/dist` including source maps.
 
 Scripts:
-- compile: `npm start` or `npm run build`
-- watch and compile: `npm run watch`
+- start: `npm start`
+- build: `npm run build` (ie. compile)
+- watch and start: `npm run watch`
+- watch and build: `npm run watch:b`
 
 ### Run Tests
 
-`npm test` or simply `ava`
+`npm test` or simply `ava test`
+
+## Examples
+
+The `/examples` folder will at some point include some example projects, including a web page (with live reload)
+
+## Sandbox
+
+For playing around...
+
+## Docs
+
+Various ideas sketched out in `/docs`
 
 ## License
 
