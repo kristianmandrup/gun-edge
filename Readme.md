@@ -23,7 +23,7 @@ import specific
 
 ```js
 import 'gun-edge/dist/async' // import async (Promise) methods
-import 'gun-edge/dist/mapReduce' // import mapReduce chain method
+import 'gun-edge/dist/map-reduce' // import mapReduce chain method
 import 'gun-edge/dist/value' // value chain method
 ```
 
@@ -34,6 +34,7 @@ You can do the same using `require` for Node.js
 - `Gun.create`
 
 gun chain methods
+
 - `.date(dateValue)`
 - `.each()`
 - `.live(cb, opt)` - listen to new values like `on` but without the meta data
@@ -43,14 +44,16 @@ gun chain methods
 - `.out(navOpts)`
 - `.recurse(cb, filter)` - recursively navigate bucket graph/tree structure
 - `.value(cb, opt)` - get the node value (no meta)
+- `.valueAt(path, cb, opt)` : get value at the `path` (no meta)
 - `.fields()` - static list of current field names (keys) in the bucket
 
-Async methods (use via Promise or async/await)
-- `.valAsync(cb, opt)`: async - full value (with meta)
-- `.valueAsync(cb, opt)` : async - get value (no meta)
-- `.valueAt(path, cb, opt)` : async - get value at the `path` (no meta)
-- `.mapAsync(transform, opt)` : async - map and optionally transform (broken in gun?)
-- `.mapReduceAsync(options, cb, putCb, opt)`: async - mapReduce
+Async methods (`Promise` or ES7 `async/await`). Prefix with `$`
+
+- `.$val(cb, opt)` : async - full value (with meta)
+- `.$value(cb, opt)` : async - get value (no meta)
+- `.$valueAt(path, opt)` : async - get value at the `path` (no meta)
+- `.$map(transform, opt)` : async - map and optionally transform (broken in gun?)
+- `.$mapReduce(options, putCb, opt)`: async - mapReduce
 
 ## mapReduce
 
@@ -60,8 +63,9 @@ that receives the map-reduced (ie. transformed) bucket.
 
 ```js
 .mapReduce({
-  // stopCondition: function({field, val})
-  iterator: 'live', // default
+  iterator: 'val', // default
+  // processWhile: function({field, val})
+  // updateWhen: function({field, val})
   logging: false, // default
   newField: reverse, // or string
   newValue: 'ready', // or function
@@ -73,39 +77,53 @@ that receives the map-reduced (ie. transformed) bucket.
 
 ### Arguments
 
-callback `cb` is called when done. Arguments: `putCb` and `opt`  are optional.
+The callback `cb` is called when done. Arguments: `putCb` and `opt`  are optional.
 `putCb` is used on any internal `put`, including delete (ie. `put(null)`)
 `opt` is the typical Gun opt for controlling sync/storage.
 
-#### stopCondition
+#### processWhile & updateWhen
 
-The `stopCondition` is bound to the iterator context where the following variables are in scope.
+The `processWhile` & `updateWhen` functions are both bound to the iterator context where the following variables are in scope.
 
 ```js
 let oldProps = {}
 let newProps = {}
 let deleteFields = {}
 let visited = {}
-let fields = [...] // the list of current field names
+let updated = false
+let allFields = [...]
+let processedFields = 0
 ```
 
 The default stopCondition is:
 
 ```js
-function defaultStopCondition({
+function defaultProcessWhile({
   field,
   val
 }) {
+  // ie. not a revisited field
   return !visited[field]
 }
 ```
 
 Which means it stops iterating once it encounters a field it has already visited.
 
+```js
+function defaultUpdateWhen({
+  field,
+  val
+}) {
+  let processedAll = (processedFields >= allFields.length)
+  let visitedAll = allFields.every(f => visited[f])
+  return visitedAll && processedAll
+}
+```
+
 **Usage Example**
 
 ```js
-import 'gun-edge/mapReduce'
+import 'gun-edge/dist/map-reduce'
 
 // where str is the property field name in this case
 function reverse(str, val) {
@@ -113,8 +131,8 @@ function reverse(str, val) {
 }
 
 async function cb(bucket) {
-  let violet = await bucket.valueAt('violet')
-  console.log('colors::', await bucket.valueAsync())
+  let violet = await bucket.$valueAt('violet')
+  console.log('colors::', await bucket.$value())
   console.log('violet::', violet)
   t.is(violet, 'violet')
 }
@@ -151,7 +169,18 @@ violet:: done
 */
 ```
 
-TODO: Add Promise variant
+### Promise async/await variant
+
+```js
+import 'gun-edge/dist/async/map-reduce'
+
+let reducedCols = await cols.$mapReduce({
+  newField: reverse,
+  newValue: 'ready',
+  value: (v) => 'done',
+  filters: [noColor('red'), noColor('green')]
+})
+```
 
 ## Contributing
 

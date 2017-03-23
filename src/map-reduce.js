@@ -13,8 +13,9 @@ export function mapReduce(bucket, {
   value,
   filter,
   filters,
-  iterator = 'live',
-  stopCondition,
+  iterator = 'val',
+  processWhile,
+  updateWhen,
   logging = false
 }, cb, putCb, opt) {
 
@@ -23,15 +24,41 @@ export function mapReduce(bucket, {
   let deleteFields = {}
   let visited = {}
   let updated = false
+  let allFields = bucket.fields()
+  let processedFields = 0
 
-  function defaultStopCondition({
+  function defaultProcessWhile({
     field,
     val
   }) {
-    return !visited[field]
+    let reVisit = visited[field]
+    let decision = !reVisit
+    log('processWhile', reVisit, decision)
+    return decision
   }
 
-  stopCondition = stopCondition || defaultStopCondition
+  function defaultUpdateWhen({
+    field,
+    val
+  }) {
+    let processedAll = (processedFields >= allFields.length)
+    let visitedAll = allFields.every(f => visited[f])
+    let decision = visitedAll && processedAll
+    log('updateWhen', visitedAll, processedAll, decision)
+    return decision
+  }
+
+  function logger(fun) {
+    return function _log(...args) {
+      if (logging)
+        console.log(fun, ...args)
+    }
+  }
+
+  const log = logger(iterator)
+
+  processWhile = processWhile || defaultProcessWhile
+  updateWhen = updateWhen || defaultUpdateWhen
 
   function ensureFun(fun) {
     if (fun && typeof fun !== 'function') {
@@ -46,38 +73,44 @@ export function mapReduce(bucket, {
   let oldValueFun = ensureFun(value)
 
   function updateBucket() {
+    log('put', oldProps)
     bucket.put(oldProps, putCb, opt)
+    log('put', newProps)
     bucket.put(newProps, putCb, opt)
 
     let deleteKeys = Object.keys(deleteFields)
     if (deleteKeys.length > 0) {
+      log('DELETE', deleteKeys)
       for (let dkey of deleteKeys) {
         bucket.get(dkey).put(null, putCb, opt)
       }
     }
+
     if (cb) {
       cb(bucket)
+      log('DONE')
+    } else {
+      throw Error('Missing callback', cb)
     }
   }
 
-  function logger(fun) {
-    return function _log(...args) {
-      if (logging)
-        console.log(fun, ...args)
-    }
-  }
+  log(allFields)
 
-  const log = logger(iterator)
-  let fields = bucket.fields()
-  log(fields)
+  processWhile = processWhile.bind(this)
+  updateWhen = updateWhen.bind(this)
 
   bucket.map()[iterator](function (val, field) {
+    log('iterate', {
+      field,
+      val
+    })
     let newKey = newFieldFun ? newFieldFun(field, val) : field
     let newValue = newValueFun ? newValueFun(val, field) : val
     let oldValue = oldValueFun ? oldValueFun(val, field) : val
     let delField = false
 
     if (filters) {
+      log('process filters', filters.length)
       delField = filters.reduce((filtered, filter) => {
         return !filtered ? filter(field, val) : filtered
       }, false)
@@ -94,24 +127,41 @@ export function mapReduce(bucket, {
       delete: delField
     })
 
-    stopCondition = stopCondition.bind(this)
+    let doReduce = processWhile({
+      field,
+      val
+    })
+    log('doReduce', doReduce)
 
-    if (stopCondition({
+    if (doReduce) {
+      log('reduce', {
         field,
-        val
-      })) {
+        val,
+        processedFields
+      })
       if (delField) {
         deleteFields[field] = true
       } else {
-        visited[field] = true
-        visited[newKey] = true
         oldProps[field] = oldValue
         newProps[newKey] = newValue
       }
-    } else {
+      visited[field] = true
+      visited[newKey] = true
+      processedFields++
+    }
+    let doUpdate = updateWhen({
+      field,
+      val
+    })
+    log('doUpdate', doUpdate, processedFields)
+    if (doUpdate) {
+      // on stopCondition
       if (!updated) {
+        log('UPDATE BUCKET')
         updated = true
         updateBucket()
+      } else {
+        log('ignore update')
       }
     }
   })

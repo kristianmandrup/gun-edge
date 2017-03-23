@@ -2,7 +2,7 @@ import Gun from 'gun/gun'
 import test from 'ava'
 
 import '../src/value'
-import '../src/async/val'
+import '../src/async'
 
 const gun = Gun();
 
@@ -33,14 +33,24 @@ function reverse(str, val) {
 
 import {
   mapReduce
-} from '../src/mapReduce'
+} from '../src/map-reduce'
 
-test('mapAsync pub/sub', async t => {
-  async function cb(bucket) {
-    let violet = await bucket.valueAtAsync('violet')
-    console.log('colors::', await bucket.valueAsync())
-    console.log('violet::', violet)
-    t.is(violet, 'violet')
+// remove a color field
+const noColor = (color) => {
+  return (field, value) => {
+    return field === color
+  }
+}
+
+test('$mapReduce callback', async t => {
+
+  async function handleResult(bucket) {
+    // console.log('handleResult')
+    let reducedColors = await bucket.$value()
+    console.log('colors::', reducedColors)
+    let teloiv = reducedColors['teloiv']
+    console.log('teloiv::', teloiv)
+    t.is(teloiv, 'ready')
   }
 
   let cols = gun.get('colors')
@@ -51,25 +61,14 @@ test('mapAsync pub/sub', async t => {
     green: false
   })
 
-  // remove a color field
-  const noColor = (color) => {
-    return (field, value) => {
-      return field === color
-    }
-  }
-
-  // mapReduce(cols, {
-  //   tfield: reverse,
-  //   newValue: 'ready',
-  //   oldValue: (v) => 'done',
-  //   filters: [noColor('red'), noColor('green')]
-  // }, cb)
+  // let violet = await cols.$valueAt('violet')
+  // console.log('violet before', violet)
 
   cols.mapReduce({
-    logging: true,
+    // logging: true,
     newField: reverse,
     newValue: 'ready',
     value: (v) => 'done',
     filters: [noColor('red'), noColor('green')]
-  }, cb)
+  }, handleResult)
 })

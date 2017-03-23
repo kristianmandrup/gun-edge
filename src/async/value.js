@@ -1,17 +1,17 @@
 import Gun from 'gun/gun'
 
-Gun.chain.valueAsync = function (cb, opt) {
+Gun.chain.$value = function (opt) {
   var self = this
   return new Promise(function (resolve, reject) {
-    if (cb) {
-      self.value(resolve(cb()), opt)
-    } else {
-      self.value(resolve, opt)
-    }
-  });
+    self.value(resolve, opt)
+  })
 }
 
-Gun.chain.valueAtAsync = function (at, cb, opt) {
-  var self = this
-  return self.path(at).valueAsync(cb, opt)
+Gun.chain.$valueAt = function (at, opt) {
+  let path = this.path(at)
+  if (path) {
+    return path.$value(opt)
+  } else {
+    throw new Error(`No such path ${at}`)
+  }
 }

@@ -8,5 +8,10 @@ Gun.chain.value = function (cb, opt) {
 }
 
 Gun.chain.valueAt = function (at, cb, opt) {
-  return this.path(at).value(cb, opt)
+  let node = this.path(at)
+  if (node) {
+    return node.value(cb, opt)
+  } else {
+    throw new Error(`No such path ${at}`)
+  }
 }
