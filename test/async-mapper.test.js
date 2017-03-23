@@ -22,7 +22,7 @@ test('$mapReduce async/await', async t => {
     let violet = await bucket.$valueAt('violet')
     console.log('colors::', await bucket.$value())
     console.log('violet::', violet)
-    t.is(violet, true)
+    t.is(violet, 'done')
   }
 
   let cols = gun.get('_colors')
@@ -40,5 +40,6 @@ test('$mapReduce async/await', async t => {
     value: (v) => 'done',
     filters: [noColor('red'), noColor('green')]
   })
-  handleResult(reducedCols)
+
+  await handleResult(reducedCols)
 })
