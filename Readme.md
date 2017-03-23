@@ -76,6 +76,30 @@ callback `cb` is called when done. Arguments: `putCb` and `opt`  are optional.
 `putCb` is used on any internal `put`, including delete (ie. `put(null)`)
 `opt` is the typical Gun opt for controlling sync/storage.
 
+#### stopCondition
+
+The `stopCondition` is bound to the iterator context where the following variables are in scope.
+
+```js
+let oldProps = {}
+let newProps = {}
+let deleteFields = {}
+let visited = {}
+```
+
+The default stopCondition is:
+
+```js
+function defaultStopCondition({
+  field,
+  val
+}) {
+  return !visited[field]
+}
+```
+
+Which means it stops iterating once it encounters a field it has already visited.
+
 **Usage Example**
 
 ```js

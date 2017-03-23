@@ -87,6 +87,7 @@ export function mapReduce(bucket, {
     }
 
     log(delField)
+    stopCondition = stopCondition.bind(this)
 
     if (stopCondition({
         field,
