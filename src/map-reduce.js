@@ -33,8 +33,11 @@ function doMapReduce(bucket, {
   value,
   filter,
   filters,
+  fields = [],
+  ignoreFields = [],
   allFields,
   iterator = 'val',
+  validField,
   processWhile,
   updateWhen,
   updateBucket,
@@ -46,11 +49,13 @@ function doMapReduce(bucket, {
   let ctx = {
     oldProps: {},
     newProps: {},
-    deleteFields: {},
+    filteredFields: {},
     visited: {},
     updated: false,
     processedFields: 0,
-    allFields
+    allFields,
+    fields,
+    ignoreFields
   }
 
   const log = logger(iterator, logging)
@@ -68,6 +73,16 @@ function doMapReduce(bucket, {
     return decision
   }
 
+  function defaultValidField(field, ctx) {
+    let {
+      fields,
+      ignoreFields
+    } = ctx
+    let valid = fields.length === 0 || fields.length > 0 && fields.indexOf(field) >= 0
+    let invalid = ignoreFields.length > 0 && ignoreFields.indexOf(field) >= 0
+    return valid && !invalid
+  }
+
   function defaultUpdateWhen({
     field,
     val,
@@ -81,7 +96,7 @@ function doMapReduce(bucket, {
   }
 
   function defaultDeleteFromBucket(bucket, ctx) {
-    let deleteKeys = Object.keys(ctx.deleteFields)
+    let deleteKeys = Object.keys(ctx.filteredFields)
     if (deleteKeys.length > 0) {
       log('DELETE', deleteKeys)
       for (let dkey of deleteKeys) {
@@ -106,11 +121,13 @@ function doMapReduce(bucket, {
     }
   }
 
+  validField = validField || defaultValidField
   processWhile = processWhile || defaultProcessWhile
   updateWhen = updateWhen || defaultUpdateWhen
   updateBucket = updateBucket || defaultUpdateBucket
   deleteFromBucket = deleteFromBucket || defaultDeleteFromBucket
   done = done || defaultDone
+
 
   function ensureFun(fun) {
     if (fun && typeof fun !== 'function') {
@@ -134,27 +151,29 @@ function doMapReduce(bucket, {
       field,
       val
     })
+    if (!validField(field, ctx)) return
+
     let newKey = newFieldFun ? newFieldFun(field, val) : field
     let newValue = newValueFun ? newValueFun(val, field) : val
     let oldValue = oldValueFun ? oldValueFun(val, field) : val
-    let delField = false
+    let doFilter = false
 
     if (filters) {
       log('process filters', filters.length)
-      delField = filters.reduce((filtered, filter) => {
+      doFilter = filters.reduce((filtered, filter) => {
         return !filtered ? filter(field, val) : filtered
       }, false)
     }
 
     if (filter && filter(field, val)) {
-      delField = true
+      doFilter = true
     }
 
     log({
       newKey,
       newValue,
       oldValue,
-      delete: delField
+      doFilter
     })
 
     let doReduce = processWhile({
@@ -170,8 +189,8 @@ function doMapReduce(bucket, {
         val,
         processedFields: ctx.processedFields
       })
-      if (delField) {
-        ctx.deleteFields[field] = true
+      if (doFilter) {
+        ctx.filteredFields[field] = true
       } else {
         ctx.oldProps[field] = oldValue
         ctx.newProps[newKey] = newValue

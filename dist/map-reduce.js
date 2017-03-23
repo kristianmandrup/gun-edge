@@ -57,9 +57,14 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
       value = _ref.value,
       filter = _ref.filter,
       filters = _ref.filters,
+      _ref$fields = _ref.fields,
+      fields = _ref$fields === undefined ? [] : _ref$fields,
+      _ref$ignoreFields = _ref.ignoreFields,
+      ignoreFields = _ref$ignoreFields === undefined ? [] : _ref$ignoreFields,
       allFields = _ref.allFields,
       _ref$iterator = _ref.iterator,
       iterator = _ref$iterator === undefined ? 'val' : _ref$iterator,
+      validField = _ref.validField,
       processWhile = _ref.processWhile,
       updateWhen = _ref.updateWhen,
       updateBucket = _ref.updateBucket,
@@ -72,11 +77,13 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
   var ctx = {
     oldProps: {},
     newProps: {},
-    deleteFields: {},
+    filteredFields: {},
     visited: {},
     updated: false,
     processedFields: 0,
-    allFields: allFields
+    allFields: allFields,
+    fields: fields,
+    ignoreFields: ignoreFields
   };
 
   var log = logger(iterator, logging);
@@ -94,6 +101,15 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
     return decision;
   }
 
+  function defaultValidField(field, ctx) {
+    var fields = ctx.fields,
+        ignoreFields = ctx.ignoreFields;
+
+    var valid = fields.length === 0 || fields.length > 0 && fields.indexOf(field) >= 0;
+    var invalid = ignoreFields.length > 0 && ignoreFields.indexOf(field) >= 0;
+    return valid && !invalid;
+  }
+
   function defaultUpdateWhen(_ref3) {
     var field = _ref3.field,
         val = _ref3.val,
@@ -109,7 +125,7 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
   }
 
   function defaultDeleteFromBucket(bucket, ctx) {
-    var deleteKeys = Object.keys(ctx.deleteFields);
+    var deleteKeys = Object.keys(ctx.filteredFields);
     if (deleteKeys.length > 0) {
       log('DELETE', deleteKeys);
       var _iteratorNormalCompletion = true;
@@ -155,6 +171,7 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
     }
   }
 
+  validField = validField || defaultValidField;
   processWhile = processWhile || defaultProcessWhile;
   updateWhen = updateWhen || defaultUpdateWhen;
   updateBucket = updateBucket || defaultUpdateBucket;
@@ -185,27 +202,29 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
       field: field,
       val: val
     });
+    if (!validField(field, ctx)) return;
+
     var newKey = newFieldFun ? newFieldFun(field, val) : field;
     var newValue = newValueFun ? newValueFun(val, field) : val;
     var oldValue = oldValueFun ? oldValueFun(val, field) : val;
-    var delField = false;
+    var doFilter = false;
 
     if (filters) {
       log('process filters', filters.length);
-      delField = filters.reduce(function (filtered, filter) {
+      doFilter = filters.reduce(function (filtered, filter) {
         return !filtered ? filter(field, val) : filtered;
       }, false);
     }
 
     if (filter && filter(field, val)) {
-      delField = true;
+      doFilter = true;
     }
 
     log({
       newKey: newKey,
       newValue: newValue,
       oldValue: oldValue,
-      delete: delField
+      doFilter: doFilter
     });
 
     var doReduce = processWhile({
@@ -221,8 +240,8 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
         val: val,
         processedFields: ctx.processedFields
       });
-      if (delField) {
-        ctx.deleteFields[field] = true;
+      if (doFilter) {
+        ctx.filteredFields[field] = true;
       } else {
         ctx.oldProps[field] = oldValue;
         ctx.newProps[newKey] = newValue;

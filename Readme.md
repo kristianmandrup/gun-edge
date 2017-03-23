@@ -93,10 +93,12 @@ The `processWhile` & `updateWhen` functions are both called with a context objec
 {
   oldProps: {},
   newProps: {},
-  deleteFields: {},
+  filteredFields: {},
   visited: {},
   updated: false,
   processedFields: 0,
+  fields: [], // to process
+  ignoreFields: [], // to ignore
   allFields: [
     //'red', 'blue', ...
   ]
@@ -136,7 +138,7 @@ Override by supplying `deleteFromBucket` function option
 
 ```js
 function defaultDeleteFromBucket(bucket, ctx) {
-  let deleteKeys = Object.keys(ctx.deleteFields)
+  let deleteKeys = Object.keys(ctx.filteredFields)
   if (deleteKeys.length > 0) {
     log('DELETE', deleteKeys)
     for (let dkey of deleteKeys) {
@@ -243,6 +245,9 @@ let reducedCols = await cols.$mapReduce({
   newValue: 'ready',
   value: (v) => 'done',
   filters: [noColor('red'), noColor('green')],
+  // fields = ['red', 'green'], // only process these fields
+  // ignoreFields = ['pink'], // skip these fields
+  // validField: function(field, ctx) // determine to process this field or not
   processWhile, // function(field, val, ctx)
   updateBucket, // function(bucket, ctx)
   deleteFromBucket, // function(bucket, ctx)
