@@ -49,8 +49,8 @@ gun chain methods
 
 Async methods (`Promise` or ES7 `async/await`). Prefix with `$`
 
-- `.$val(cb, opt)` : async - full value (with meta)
-- `.$value(cb, opt)` : async - get value (no meta)
+- `.$val(opt)` : async - full value (with meta)
+- `.$value(opt)` : async - get value (no meta)
 - `.$valueAt(path, opt)` : async - get value at the `path` (no meta)
 - `.$map(transform, opt)` : async - map and optionally transform (broken in gun?)
 - `.$mapReduce(options, putCb, opt)`: async - mapReduce
