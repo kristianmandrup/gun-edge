@@ -1,0 +1,1 @@
+{"version":3,"sources":["filter.js"],"names":["chain","filter"],"mappings":";;AAAA;;;;;;AAEA,cAAIA,KAAJ,CAAUC,MAAV,GAAmB,UAAUA,MAAV,EAAkB;AACnC;AACD,CAFD","file":"filter.js","sourcesContent":["import Gun from 'gun/gun'\n\nGun.chain.filter = function (filter) {\n  // map and filter\n}"]}
