@@ -9,9 +9,9 @@ Gun.chain.mapReduce = function (opts, cb) {
 }
 
 export function mapReduce(bucket, {
-  tfield,
+  newField,
   newValue,
-  oldValue,
+  value,
   filter,
   filters
 }, cb) {
@@ -24,8 +24,9 @@ export function mapReduce(bucket, {
     }
   }
 
+  newFieldFun = ensureFun(newField)
   let newValueFun = ensureFun(newValue)
-  let oldValueFun = ensureFun(oldValue)
+  let oldValueFun = ensureFun(value)
 
   let oldProps = {}
   let newProps = {}
@@ -50,9 +51,9 @@ export function mapReduce(bucket, {
   let updated = false
 
   bucket.map().live(function (val, field) {
-    let newKey = tfield ? tfield(field) : field
-    let newValue = newValueFun ? newValueFun(val) : val
-    let oldValue = oldValueFun ? oldValueFun(val) : val
+    let newKey = newFieldFun ? newFieldFun(field, val) : field
+    let newValue = newValueFun ? newValueFun(val, field) : val
+    let oldValue = oldValueFun ? oldValueFun(val, field) : val
     let delField = false
 
     if (filters) {

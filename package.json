@@ -6,8 +6,8 @@
   "scripts": {
     "test": "ava",
     "watch": "gulp watch",
-    "start": "gulp scripts",
-    "scripts": "gulp scripts"
+    "start": "gulp build",
+    "build": "gulp build"
   },
   "keywords": [
     "gun",
@@ -19,7 +19,7 @@
     "chaining"
   ],
   "author": "Kristian Mandrup",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "gun": "^0.6.6"
   },

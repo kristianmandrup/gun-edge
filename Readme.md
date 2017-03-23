@@ -1,10 +1,33 @@
 # Gun edge
 
 Extra DSL convenience extensions for [Gun.js](http://gun.js.org/)
+Many of the snippets were extracted from [Gun Snippets 0.3](https://github.com/amark/gun/wiki/Snippets-(v0.3.x))
+
+Some extra chain methods have been added, such as `mapReduce` and some for working with Promises or async/await (ES7) instead of callbacks.
 
 ## Install
 
 `npm i -S gun-edge`
+
+## Use
+
+Assuming Babel or similar transpiler setup (2017)
+
+import all
+
+```js
+import 'gun-edge' // import all chain methods
+```
+
+import specific
+
+```js
+import 'gun-edge/dist/async' // import async (Promise) methods
+import 'gun-edge/dist/mapReduce' // import mapReduce chain method
+import 'gun-edge/dist/value' // value chain method
+```
+
+You can do the same using `require` for Node.js
 
 ## API extensions
 
@@ -30,14 +53,26 @@ Async methods (use via Promise or async/await)
 ## mapReduce
 
 Iterate and transform all the properties of a bucket!
-This is KILLER!!!
+The `mapReduce` chain function takes the following `options` map and a `cb` function
+that receives the map-reduced (ie. transformed) bucket.
 
-Example:
+```js
+.mapReduce({
+  newField: reverse, // or string
+  newValue: 'ready', // or function
+  value: (val, field) => 'done', // or string
+  filter: noColor('blue'),
+  filters: [noColor('red'), noColor('green')]
+}, cb)
+```
+
+**Usage Example**
 
 ```js
 import 'gun-edge/mapReduce'
 
-function reverse(str) {
+// where str is the property field name in this case
+function reverse(str, val) {
   return str ? str.split('').reverse().join('') : str
 }
 
@@ -64,9 +99,9 @@ const noColor = (color) => {
 }
 
 cols.mapReduce({
-  tfield: reverse,
+  newField: reverse,
   newValue: 'ready',
-  oldValue: (v) => 'done',
+  value: (v) => 'done',
   filters: [noColor('red'), noColor('green')]
 }, cb)
 
@@ -80,17 +115,23 @@ violet:: done
 */
 ```
 
-## TODO
+TODO: Add Promise variant
 
-Make it all work!
+## Contributing
 
-## Testing
+### Compile
 
-`npm test`
+This project includes a `gulpfile` configured to use Babel 6.
+All `/src` files are compiled to `/dist` including source maps.
 
-or simply `ava`
+Scripts:
+- compile: `npm start` or `npm run build`
+- watch and compile: `npm run watch`
 
+### Run Tests
+
+`npm test` or simply `ava`
 
 ## License
 
-ISC
+MIT Kristian Mandrup

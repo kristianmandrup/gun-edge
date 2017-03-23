@@ -1,1 +1,1 @@
-import './src'
+require('./dist')
