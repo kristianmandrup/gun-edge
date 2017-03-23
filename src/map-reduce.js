@@ -37,6 +37,9 @@ function doMapReduce(bucket, {
   iterator = 'val',
   processWhile,
   updateWhen,
+  updateBucket,
+  deleteFromBucket,
+  done,
   logging = false
 }, cb, putCb, opt) {
 
@@ -77,8 +80,37 @@ function doMapReduce(bucket, {
     return decision
   }
 
+  function defaultDeleteFromBucket(bucket, ctx) {
+    let deleteKeys = Object.keys(ctx.deleteFields)
+    if (deleteKeys.length > 0) {
+      log('DELETE', deleteKeys)
+      for (let dkey of deleteKeys) {
+        bucket.get(dkey).put(null, putCb, opt)
+      }
+    }
+  }
+
+  function defaultUpdateBucket(bucket, ctx) {
+    log('put', ctx.oldProps)
+    bucket.put(ctx.oldProps, putCb, opt)
+    log('put', ctx.newProps)
+    bucket.put(ctx.newProps, putCb, opt)
+  }
+
+  function defaultDone(bucket, cb) {
+    log('DONE')
+    if (cb) {
+      cb(bucket)
+    } else {
+      throw Error('Missing callback', cb)
+    }
+  }
+
   processWhile = processWhile || defaultProcessWhile
   updateWhen = updateWhen || defaultUpdateWhen
+  updateBucket = updateBucket || defaultUpdateBucket
+  deleteFromBucket = deleteFromBucket || defaultDeleteFromBucket
+  done = done || defaultDone
 
   function ensureFun(fun) {
     if (fun && typeof fun !== 'function') {
@@ -91,28 +123,6 @@ function doMapReduce(bucket, {
   let newFieldFun = ensureFun(newField)
   let newValueFun = ensureFun(newValue)
   let oldValueFun = ensureFun(value)
-
-  function updateBucket(ctx) {
-    log('put', ctx.oldProps)
-    bucket.put(ctx.oldProps, putCb, opt)
-    log('put', ctx.newProps)
-    bucket.put(ctx.newProps, putCb, opt)
-
-    let deleteKeys = Object.keys(ctx.deleteFields)
-    if (deleteKeys.length > 0) {
-      log('DELETE', deleteKeys)
-      for (let dkey of deleteKeys) {
-        bucket.get(dkey).put(null, putCb, opt)
-      }
-    }
-
-    if (cb) {
-      cb(bucket)
-      log('DONE')
-    } else {
-      throw Error('Missing callback', cb)
-    }
-  }
 
   log(allFields)
 
@@ -181,7 +191,9 @@ function doMapReduce(bucket, {
       if (!ctx.updated) {
         log('UPDATE BUCKET')
         ctx.updated = true
-        updateBucket(ctx)
+        updateBucket(bucket, ctx)
+        deleteFromBucket(bucket, ctx)
+        done(bucket, cb)
       } else {
         log('ignore update')
       }

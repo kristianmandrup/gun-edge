@@ -62,6 +62,9 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
       iterator = _ref$iterator === undefined ? 'val' : _ref$iterator,
       processWhile = _ref.processWhile,
       updateWhen = _ref.updateWhen,
+      updateBucket = _ref.updateBucket,
+      deleteFromBucket = _ref.deleteFromBucket,
+      done = _ref.done,
       _ref$logging = _ref.logging,
       logging = _ref$logging === undefined ? false : _ref$logging;
 
@@ -105,29 +108,7 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
     return decision;
   }
 
-  processWhile = processWhile || defaultProcessWhile;
-  updateWhen = updateWhen || defaultUpdateWhen;
-
-  function ensureFun(fun) {
-    if (fun && typeof fun !== 'function') {
-      return function (v) {
-        return fun;
-      };
-    } else {
-      return fun;
-    }
-  }
-
-  var newFieldFun = ensureFun(newField);
-  var newValueFun = ensureFun(newValue);
-  var oldValueFun = ensureFun(value);
-
-  function updateBucket(ctx) {
-    log('put', ctx.oldProps);
-    bucket.put(ctx.oldProps, putCb, opt);
-    log('put', ctx.newProps);
-    bucket.put(ctx.newProps, putCb, opt);
-
+  function defaultDeleteFromBucket(bucket, ctx) {
     var deleteKeys = Object.keys(ctx.deleteFields);
     if (deleteKeys.length > 0) {
       log('DELETE', deleteKeys);
@@ -156,14 +137,43 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
         }
       }
     }
+  }
 
+  function defaultUpdateBucket(bucket, ctx) {
+    log('put', ctx.oldProps);
+    bucket.put(ctx.oldProps, putCb, opt);
+    log('put', ctx.newProps);
+    bucket.put(ctx.newProps, putCb, opt);
+  }
+
+  function defaultDone(bucket, cb) {
+    log('DONE');
     if (cb) {
       cb(bucket);
-      log('DONE');
     } else {
       throw Error('Missing callback', cb);
     }
   }
+
+  processWhile = processWhile || defaultProcessWhile;
+  updateWhen = updateWhen || defaultUpdateWhen;
+  updateBucket = updateBucket || defaultUpdateBucket;
+  deleteFromBucket = deleteFromBucket || defaultDeleteFromBucket;
+  done = done || defaultDone;
+
+  function ensureFun(fun) {
+    if (fun && typeof fun !== 'function') {
+      return function (v) {
+        return fun;
+      };
+    } else {
+      return fun;
+    }
+  }
+
+  var newFieldFun = ensureFun(newField);
+  var newValueFun = ensureFun(newValue);
+  var oldValueFun = ensureFun(value);
 
   log(allFields);
 
@@ -232,7 +242,9 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
       if (!ctx.updated) {
         log('UPDATE BUCKET');
         ctx.updated = true;
-        updateBucket(ctx);
+        updateBucket(bucket, ctx);
+        deleteFromBucket(bucket, ctx);
+        done(bucket, cb);
       } else {
         log('ignore update');
       }

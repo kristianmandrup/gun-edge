@@ -83,29 +83,36 @@ The callback `cb` is called when done. Arguments: `putCb` and `opt`  are optiona
 `putCb` is used on any internal `put`, including delete (ie. `put(null)`)
 `opt` is the typical Gun opt for controlling sync/storage.
 
-#### processWhile & updateWhen
+#### processWhile
 
-The `processWhile` & `updateWhen` functions are both bound to the iterator context where the following variables are in scope.
+updateWhen
+
+The `processWhile` & `updateWhen` functions are both called with a context object:
 
 ```js
-let oldProps = {}
-let newProps = {}
-let deleteFields = {}
-let visited = {}
-let updated = false
-let allFields = [...]
-let processedFields = 0
+{
+  oldProps: {},
+  newProps: {},
+  deleteFields: {},
+  visited: {},
+  updated: false,
+  processedFields: 0,
+  allFields: [
+    //'red', 'blue', ...
+  ]
+}
 ```
 
-The default stopCondition is:
+The default `processWhile` function:
 
 ```js
 function defaultProcessWhile({
   field,
-  val
+  val,
+  ctx
 }) {
   // ie. not a revisited field
-  return !visited[field]
+  return !ctx.visited[field]
 }
 ```
 
@@ -114,11 +121,54 @@ Which means it stops iterating once it encounters a field it has already visited
 ```js
 function defaultUpdateWhen({
   field,
-  val
+  val,
+  ctx
 }) {
-  let processedAll = (processedFields >= allFields.length)
-  let visitedAll = allFields.every(f => visited[f])
+  let processedAll = (processedFields >= ctx.allFields.length)
+  let visitedAll = ctx.allFields.every(f => ctx.visited[f])
   return visitedAll && processedAll
+}
+```
+
+Default function to delete items from bucket.
+Override by supplying `deleteFromBucket` function option
+
+
+```js
+function defaultDeleteFromBucket(bucket, ctx) {
+  let deleteKeys = Object.keys(ctx.deleteFields)
+  if (deleteKeys.length > 0) {
+    log('DELETE', deleteKeys)
+    for (let dkey of deleteKeys) {
+      bucket.get(dkey).put(null, putCb, opt)
+    }
+  }
+}
+```
+
+Default function to update bucket.
+Override by supplying `updateBucket` function option
+
+```js
+function defaultUpdateBucket(bucket, ctx) {
+  log('put', ctx.oldProps)
+  bucket.put(ctx.oldProps, putCb, opt)
+  log('put', ctx.newProps)
+  bucket.put(ctx.newProps, putCb, opt)
+}
+```
+
+Default `done` function which calls the `cb` with the transformed bucket
+Override by supplying `done` function option
+
+```js
+function defaultDone(bucket, cb) {
+  log('DONE')
+  if (cb) {
+    cb(bucket)
+  } else {
+    throw Error('Missing callback', cb)
+  }
 }
 ```
 
@@ -176,11 +226,31 @@ violet:: done
 ```js
 import 'gun-edge/dist/async/map-reduce'
 
+// add status created to each existing user
+let result = await users.$mapReduce({
+  value: (v) => Object.assign(v, {
+    status: 'created'
+  })
+})
+```
+
+Example usage, assuming we supply some of our own overrides and customization options
+
+```js
+let logger = new Logger(opts)
 let reducedCols = await cols.$mapReduce({
   newField: reverse,
   newValue: 'ready',
   value: (v) => 'done',
-  filters: [noColor('red'), noColor('green')]
+  filters: [noColor('red'), noColor('green')],
+  processWhile, // function(field, val, ctx)
+  updateBucket, // function(bucket, ctx)
+  deleteFromBucket, // function(bucket, ctx)
+  // example of override
+  done: (bucket, cb) => {
+    logger.log('COLORS UPDATED')
+    cb(bucket)
+  }
 })
 ```
 
