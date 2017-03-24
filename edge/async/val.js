@@ -1,15 +1,21 @@
-'use strict';
+"use strict";
 
-var _gun = require('gun/gun');
-
-var _gun2 = _interopRequireDefault(_gun);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-_gun2.default.chain.$val = function (opt) {
-  var self = this;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.$val = $val;
+exports.$addVal = $addVal;
+function $val(node, opt) {
   return new Promise(function (resolve, reject) {
-    self.val(resolve, opt);
+    node.val(resolve, opt);
   });
-};
+}
+
+function $addVal(chain) {
+  chain.$val = async function (opt) {
+    return await $val(this, opt);
+  };
+
+  return chain;
+}
 //# sourceMappingURL=val.js.map

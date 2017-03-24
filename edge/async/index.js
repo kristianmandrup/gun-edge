@@ -16,12 +16,18 @@ var _val = require('./val');
 
 var _value = require('./value');
 
+var _live = require('./live');
+
+var _on = require('./on');
+
 var chains = {
   $addFields: _fields.$addFields,
   $addMap: _map.$addMap,
   $addMapReduce: _mapReduce.$addMapReduce,
   $addVal: _val.$addVal,
-  $addValue: _value.$addValue
+  $addValue: _value.$addValue,
+  $addLive: _live.$addLive,
+  $addOn: _on.$addOn
 };
 
 function capitalize(str) {
@@ -39,9 +45,11 @@ function add(Gun) {
   });
 }
 
-var allNames = ['fields', 'map', 'mapReduce', 'val', 'value'];
+var allNames = ['fields', 'map', 'mapReduce', 'val', 'value', 'live', 'on'];
 
 function $addAll(Gun) {
   add.apply(undefined, [Gun].concat(allNames));
 }
+
+exports.default = $addAll;
 //# sourceMappingURL=index.js.map

@@ -13,13 +13,22 @@ import {
 import {
   $addValue
 } from './value'
+import {
+  $addLive
+} from './live'
+import {
+  $addOn
+} from './on'
+
 
 const chains = {
   $addFields,
   $addMap,
   $addMapReduce,
   $addVal,
-  $addValue
+  $addValue,
+  $addLive,
+  $addOn
 }
 
 function capitalize(str) {
@@ -38,9 +47,13 @@ const allNames = [
   'map',
   'mapReduce',
   'val',
-  'value'
+  'value',
+  'live',
+  'on'
 ]
 
 export function $addAll(Gun) {
   add(Gun, ...allNames)
 }
+
+export default $addAll
