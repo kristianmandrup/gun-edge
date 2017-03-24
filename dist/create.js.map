@@ -1,1 +1,0 @@
-{"version":3,"sources":["create.js"],"names":["create","apply","arguments"],"mappings":";;AAAA;;;;;;AAEA,cAAIA,MAAJ,GAAa,YAAY;AACvB,SAAO,cAAIC,KAAJ,CAAU,IAAV,EAAgBC,SAAhB,CAAP;AACD,CAFD","file":"create.js","sourcesContent":["import Gun from 'gun/gun'\n\nGun.create = function () {\n  return Gun.apply(this, arguments);\n};"]}

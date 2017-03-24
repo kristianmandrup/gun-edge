@@ -2,7 +2,7 @@
   "name": "gun-edge",
   "version": "0.8.1",
   "description": "Gun chain extensions for a higher level DSL and API",
-  "main": "index.js",
+  "main": "edge/index.js",
   "scripts": {
     "test": "ava",
     "watch": "gulp watch",

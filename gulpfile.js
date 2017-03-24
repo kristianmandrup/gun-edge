@@ -8,7 +8,7 @@ gulp.task('build', function () {
     .pipe(sourcemaps.init())
     .pipe(babel())
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('dist'))
+    .pipe(gulp.dest('edge'))
 });
 
 gulp.task('start', function () {
@@ -16,7 +16,7 @@ gulp.task('start', function () {
     .pipe(sourcemaps.init())
     .pipe(babel())
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('dist'))
+    .pipe(gulp.dest('edge'))
     .pipe(livereload());
 });
 

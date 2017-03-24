@@ -5,7 +5,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.addValue = exports.addRecurse = exports.addOut = exports.addNo = exports.addMapReduce = exports.addLocal = exports.addLive = exports.addInspect = exports.addFilter = exports.addFields = exports.addEach = exports.addDate = exports.addCopy = exports.addAsync = undefined;
 exports.add = add;
-exports.addAll = addAll;
+
+exports.default = function (Gun) {
+  return add.apply(undefined, [Gun].concat(allNames));
+};
 
 var _async = require('./async');
 
@@ -65,6 +68,7 @@ function add(Gun) {
     var nameCap = capitalize(name);
     chains['add' + nameCap](Gun.chain, Gun);
   });
+  return Gun;
 }
 
 var allNames = ['async', 'copy', 'date', 'each', 'fields', 'filter', 'inspect', 'live', 'local', 'mapReduce', 'no',
@@ -85,7 +89,4 @@ exports.addNo = _no.addNo;
 exports.addOut = addOut;
 exports.addRecurse = _recurse.addRecurse;
 exports.addValue = _value.addValue;
-function addAll(Gun) {
-  add.apply(undefined, [Gun].concat(allNames));
-}
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=all.js.map

@@ -24,29 +24,27 @@ Assuming Babel or similar transpiler setup (2017)
 ```js
 import Gun from 'gun/gun'
 
-Gun.chainAll = function (...funs) {
-  funs.forEach(fun => fun(Gun.chain, Gun))
-}
-
 import {
   addValue,
-  $addAll
-} from 'gun-edge'
+  $addAll,
+  default as chainAll
+} from 'gun-edge/all'
 
-Gun.chainAll(addValue, $addAll)
+chainAll(Gun, addValue, $addAll)
 ```
 
-Alternatively:
+Alternatively to chain everything:
 
 ```js
-import {
-  addAll
-} from 'gun-edge'
-
-addAll(Gun)
+import chain from 'gun-edge'
+chain(Gun)
 ```
 
-You can do the same using `require` for Node.js
+Using `require` (Node.js) simply do:
+
+```js
+require('gun-edge')(Gun)
+```
 
 ## API extensions
 
@@ -75,6 +73,14 @@ Async methods (`Promise` or ES7 `async/await`). Prefix with `$`
 - `.$valueAt(path, opt)` - get value at the `path` (no meta)
 - `.$map(transform, opt)` - map and optionally transform (broken in gun?)
 - `.$mapReduce(options, putCb, opt)` - mapReduce
+
+TODO:
+- `$live`
+- `$on`
+- `$recurse`
+- ...
+
+Feel free to come with suggestions or make a PR :)
 
 ## mapReduce
 
