@@ -42,15 +42,20 @@ const noColor = (color) => {
   }
 }
 
-test('$mapReduce callback', async t => {
+test.cb('$mapReduce callback', t => {
+  function handleResult(bucket, ctx) {
+    function testRes() {
+      bucket.value((reducedColors) => {
+        console.log('colors::', reducedColors)
+        let teloiv = reducedColors.teloiv
+        console.log('teloiv::', teloiv)
+        t.is(teloiv, 'ready')
+        t.end()
+      })
+    }
 
-  async function handleResult(bucket) {
-    // console.log('handleResult')
-    let reducedColors = await bucket.$value()
-    console.log('colors::', reducedColors)
-    let teloiv = reducedColors['teloiv']
-    console.log('teloiv::', teloiv)
-    t.is(teloiv, 'ready')
+    // Doesn't work :(
+    setTimeout(testRes, 1000)
   }
 
   let cols = gun.get('colors')
@@ -65,7 +70,7 @@ test('$mapReduce callback', async t => {
   // console.log('violet before', violet)
 
   cols.mapReduce({
-    // logging: true,
+    logging: true,
     newField: reverse,
     newValue: 'ready',
     value: (v) => 'done',

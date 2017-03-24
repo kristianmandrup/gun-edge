@@ -1,6 +1,6 @@
 {
   "name": "gun-edge",
-  "version": "0.7.7",
+  "version": "0.7.8",
   "description": "Gun chain extensions for a higher level DSL and API",
   "main": "index.js",
   "scripts": {
@@ -22,6 +22,7 @@
   "author": "Kristian Mandrup",
   "license": "MIT",
   "dependencies": {
+    "async": "^2.1.5",
     "gun": "^0.6.6"
   },
   "devDependencies": {

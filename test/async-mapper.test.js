@@ -19,10 +19,17 @@ const gun = Gun();
 
 test('$mapReduce async/await', async t => {
   async function handleResult(bucket) {
-    let violet = await bucket.$valueAt('violet')
-    console.log('colors::', await bucket.$value())
+    // let violet = await bucket.$valueAt('violet')
+    // let teloiv = await bucket.$valueAt('teloiv')
+    let violet = await bucket.path('violet').$value()
+    let teloiv = await bucket.path('teloiv').$value()
+
+    let colors = await bucket.$value()
+    console.log('colors::', colors)
     console.log('violet::', violet)
+    console.log('teloiv::', teloiv)
     t.is(violet, 'done')
+    t.is(teloiv, 'ready')
   }
 
   let cols = gun.get('colors')

@@ -39,8 +39,8 @@ function mapReduce(bucket) {
   });
 }
 
-function logger(fun, logging) {
-  return function _log() {
+function defaultLogger(fun, logging) {
+  return function () {
     var _console;
 
     for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
@@ -55,6 +55,7 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
   var newField = _ref.newField,
       newValue = _ref.newValue,
       value = _ref.value,
+      transform = _ref.transform,
       filter = _ref.filter,
       filters = _ref.filters,
       _ref$fields = _ref.fields,
@@ -68,10 +69,13 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
       processWhile = _ref.processWhile,
       updateWhen = _ref.updateWhen,
       updateBucket = _ref.updateBucket,
-      deleteFromBucket = _ref.deleteFromBucket,
+      filterBucket = _ref.filterBucket,
+      saveChanges = _ref.saveChanges,
       done = _ref.done,
       _ref$logging = _ref.logging,
-      logging = _ref$logging === undefined ? false : _ref$logging;
+      logging = _ref$logging === undefined ? false : _ref$logging,
+      logger = _ref.logger,
+      context = _ref.context;
 
 
   var ctx = {
@@ -83,8 +87,18 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
     processedFields: 0,
     allFields: allFields,
     fields: fields,
-    ignoreFields: ignoreFields
+    ignoreFields: ignoreFields,
+    iterator: iterator,
+    context: context,
+    putCb: putCb,
+    opt: opt
   };
+
+  transform = transform || function (field, val) {
+    return {};
+  };
+
+  logger = logger || defaultLogger;
 
   var log = logger(iterator, logging);
 
@@ -124,50 +138,35 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
     return decision;
   }
 
-  function defaultDeleteFromBucket(bucket, ctx) {
+  function defaultSaveChanges(bucket, changesObj, ctx) {
+    bucket.put(changesObj, ctx.putCb, ctx.opt);
+  }
+
+  function defaultFilterBucket(bucket, ctx) {
     var deleteKeys = Object.keys(ctx.filteredFields);
     if (deleteKeys.length > 0) {
-      log('DELETE', deleteKeys);
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
-
-      try {
-        for (var _iterator = deleteKeys[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var dkey = _step.value;
-
-          bucket.get(dkey).put(null, putCb, opt);
-        }
-      } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
-          }
-        } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
-          }
-        }
-      }
+      log('FILTER', deleteKeys);
+      var deleteObj = deleteKeys.reduce(function (obj, key) {
+        obj[key] = null;
+        return obj;
+      }, {});
+      log('deleteObj', deleteObj);
+      ctx.saveChanges(bucket, deleteObj, ctx);
     }
   }
 
   function defaultUpdateBucket(bucket, ctx) {
-    log('put', ctx.oldProps);
-    bucket.put(ctx.oldProps, putCb, opt);
-    log('put', ctx.newProps);
-    bucket.put(ctx.newProps, putCb, opt);
+    log('UPDATE', props);
+    var props = Object.assign(ctx.oldProps, ctx.newProps);
+    ctx.saveChanges(bucket, props, ctx);
   }
 
-  function defaultDone(bucket, cb) {
+  function defaultDone(bucket, cb, ctx) {
     log('DONE');
     if (cb) {
-      cb(bucket);
+      cb(bucket, ctx);
     } else {
-      throw Error('Missing callback', cb);
+      throw Error(ctx.iterator + ': missing callback (in done)');
     }
   }
 
@@ -175,8 +174,11 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
   processWhile = processWhile || defaultProcessWhile;
   updateWhen = updateWhen || defaultUpdateWhen;
   updateBucket = updateBucket || defaultUpdateBucket;
-  deleteFromBucket = deleteFromBucket || defaultDeleteFromBucket;
+  filterBucket = filterBucket || defaultFilterBucket;
+  saveChanges = saveChanges || defaultSaveChanges;
   done = done || defaultDone;
+
+  ctx.saveChanges = saveChanges;
 
   function ensureFun(fun) {
     if (fun && typeof fun !== 'function') {
@@ -204,15 +206,17 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
     });
     if (!validField(field, ctx)) return;
 
-    var newKey = newFieldFun ? newFieldFun(field, val) : field;
-    var newValue = newValueFun ? newValueFun(val, field) : val;
-    var oldValue = oldValueFun ? oldValueFun(val, field) : val;
+    var newKey = newFieldFun ? newFieldFun(field, val, ctx) : field;
+    var newValue = newValueFun ? newValueFun(val, field, ctx) : val;
+    var newObj = transform(field, val, ctx);
+
+    var oldValue = oldValueFun ? oldValueFun(val, field, ctx) : val;
     var doFilter = false;
 
     if (filters) {
       log('process filters', filters.length);
       doFilter = filters.reduce(function (filtered, filter) {
-        return !filtered ? filter(field, val) : filtered;
+        return !filtered ? filter(field, val, ctx) : filtered;
       }, false);
     }
 
@@ -243,8 +247,10 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
       if (doFilter) {
         ctx.filteredFields[field] = true;
       } else {
-        ctx.oldProps[field] = oldValue;
+        ctx.newProps = Object.assign(ctx.newProps, newObj);
         ctx.newProps[newKey] = newValue;
+
+        ctx.oldProps[field] = oldValue;
       }
       ctx.visited[field] = true;
       ctx.visited[newKey] = true;
@@ -262,8 +268,8 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
         log('UPDATE BUCKET');
         ctx.updated = true;
         updateBucket(bucket, ctx);
-        deleteFromBucket(bucket, ctx);
-        done(bucket, cb);
+        filterBucket(bucket, ctx);
+        done(bucket, cb, ctx);
       } else {
         log('ignore update');
       }

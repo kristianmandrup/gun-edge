@@ -20,8 +20,8 @@ export function mapReduce(bucket, options = {}, cb, putCb, opt) {
   })
 }
 
-function logger(fun, logging) {
-  return function _log(...args) {
+function defaultLogger(fun, logging) {
+  return function (...args) {
     if (logging)
       console.log(fun, ...args)
   }
@@ -31,6 +31,7 @@ function doMapReduce(bucket, {
   newField,
   newValue,
   value,
+  transform,
   filter,
   filters,
   fields = [],
@@ -41,9 +42,12 @@ function doMapReduce(bucket, {
   processWhile,
   updateWhen,
   updateBucket,
-  deleteFromBucket,
+  filterBucket,
+  saveChanges,
   done,
-  logging = false
+  logging = false,
+  logger,
+  context
 }, cb, putCb, opt) {
 
   let ctx = {
@@ -55,8 +59,18 @@ function doMapReduce(bucket, {
     processedFields: 0,
     allFields,
     fields,
-    ignoreFields
+    ignoreFields,
+    iterator,
+    context,
+    putCb,
+    opt
   }
+
+  transform = transform || function (field, val) {
+    return {}
+  }
+
+  logger = logger || defaultLogger
 
   const log = logger(iterator, logging)
 
@@ -95,29 +109,35 @@ function doMapReduce(bucket, {
     return decision
   }
 
-  function defaultDeleteFromBucket(bucket, ctx) {
+  function defaultSaveChanges(bucket, changesObj, ctx) {
+    bucket.put(changesObj, ctx.putCb, ctx.opt)
+  }
+
+  function defaultFilterBucket(bucket, ctx) {
     let deleteKeys = Object.keys(ctx.filteredFields)
     if (deleteKeys.length > 0) {
-      log('DELETE', deleteKeys)
-      for (let dkey of deleteKeys) {
-        bucket.get(dkey).put(null, putCb, opt)
-      }
+      log('FILTER', deleteKeys)
+      let deleteObj = deleteKeys.reduce((obj, key) => {
+        obj[key] = null
+        return obj
+      }, {})
+      log('deleteObj', deleteObj)
+      ctx.saveChanges(bucket, deleteObj, ctx)
     }
   }
 
   function defaultUpdateBucket(bucket, ctx) {
-    log('put', ctx.oldProps)
-    bucket.put(ctx.oldProps, putCb, opt)
-    log('put', ctx.newProps)
-    bucket.put(ctx.newProps, putCb, opt)
+    log('UPDATE', props)
+    let props = Object.assign(ctx.oldProps, ctx.newProps)
+    ctx.saveChanges(bucket, props, ctx)
   }
 
-  function defaultDone(bucket, cb) {
+  function defaultDone(bucket, cb, ctx) {
     log('DONE')
     if (cb) {
-      cb(bucket)
+      cb(bucket, ctx)
     } else {
-      throw Error('Missing callback', cb)
+      throw Error(`${ctx.iterator}: missing callback (in done)`)
     }
   }
 
@@ -125,9 +145,11 @@ function doMapReduce(bucket, {
   processWhile = processWhile || defaultProcessWhile
   updateWhen = updateWhen || defaultUpdateWhen
   updateBucket = updateBucket || defaultUpdateBucket
-  deleteFromBucket = deleteFromBucket || defaultDeleteFromBucket
+  filterBucket = filterBucket || defaultFilterBucket
+  saveChanges = saveChanges || defaultSaveChanges
   done = done || defaultDone
 
+  ctx.saveChanges = saveChanges
 
   function ensureFun(fun) {
     if (fun && typeof fun !== 'function') {
@@ -153,15 +175,17 @@ function doMapReduce(bucket, {
     })
     if (!validField(field, ctx)) return
 
-    let newKey = newFieldFun ? newFieldFun(field, val) : field
-    let newValue = newValueFun ? newValueFun(val, field) : val
-    let oldValue = oldValueFun ? oldValueFun(val, field) : val
+    let newKey = newFieldFun ? newFieldFun(field, val, ctx) : field
+    let newValue = newValueFun ? newValueFun(val, field, ctx) : val
+    let newObj = transform(field, val, ctx)
+
+    let oldValue = oldValueFun ? oldValueFun(val, field, ctx) : val
     let doFilter = false
 
     if (filters) {
       log('process filters', filters.length)
       doFilter = filters.reduce((filtered, filter) => {
-        return !filtered ? filter(field, val) : filtered
+        return !filtered ? filter(field, val, ctx) : filtered
       }, false)
     }
 
@@ -192,8 +216,10 @@ function doMapReduce(bucket, {
       if (doFilter) {
         ctx.filteredFields[field] = true
       } else {
-        ctx.oldProps[field] = oldValue
+        ctx.newProps = Object.assign(ctx.newProps, newObj)
         ctx.newProps[newKey] = newValue
+
+        ctx.oldProps[field] = oldValue
       }
       ctx.visited[field] = true
       ctx.visited[newKey] = true
@@ -211,8 +237,8 @@ function doMapReduce(bucket, {
         log('UPDATE BUCKET')
         ctx.updated = true
         updateBucket(bucket, ctx)
-        deleteFromBucket(bucket, ctx)
-        done(bucket, cb)
+        filterBucket(bucket, ctx)
+        done(bucket, cb, ctx)
       } else {
         log('ignore update')
       }

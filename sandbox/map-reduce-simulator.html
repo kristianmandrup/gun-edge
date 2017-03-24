@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+</head>
+
+<body>
+  <a href="http://jsbin.com/magofejuya/edit?html,js,console">JSBin example</a>
+  <script src="http://rawgit.com/amark/gun/master/gun.js"></script>
+  <script>
+    localStorage.clear();
+
+    var gun = Gun();
+
+    var bucket = gun.get('bucket').put({
+      violet: true,
+      red: true,
+      green: false,
+      teloiv: "hello world!"
+    });
+
+    var violet = bucket.get('violet');
+    var teloiv = bucket.get('teloiv');
+
+    function Log(a) {
+      return function (b) {
+        console.log(a, '::', b);
+      };
+    }
+
+    violet.val(Log('violet'));
+    teloiv.val(Log('teloiv'));
+  </script>
+</body>
+
+</html>
