@@ -1,20 +1,26 @@
-import Gun from 'gun/gun'
-
-Gun.chain.recurse = function (cb, filter) {
+export function recurse(node, cb, filter) {
   if (!(filter instanceof Object)) {
     filter = {};
   }
-  this.val(cb);
-  this.map().val(function (data) {
+  node.val(cb);
+  node.map().val(function (data) {
     if (!(data instanceof Object)) {
       return;
     }
-    var soul = Gun.is.node.soul(data);
+    var soul = node.soul(data);
     if (filter[soul]) {
       return;
     }
     filter[soul] = true;
     this.recurse(cb, filter);
   });
-  return this;
+  return node;
 };
+
+export function addValue(chain, Gun) {
+  chain.recurse = function (cb, filter) {
+    return resurce(this, cb, filter)
+  }
+
+  return chain
+}

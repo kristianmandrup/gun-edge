@@ -1,18 +1,12 @@
-import './live'
-import './value'
-import './async'
-import './fields'
-
-import Gun from 'gun/gun'
-
-Gun.chain.mapReduce = function (opts, cb) {
-  mapReduce(this, opts, cb)
+export function addMapReduce(chain, Gun) {
+  chain.mapReduce = function (opts, cb, putCb, opt) {
+    mapReduce(this, opts, cb, putCb, opt)
+  }
+  return chain
 }
 
 export function mapReduce(bucket, options = {}, cb, putCb, opt) {
-
   bucket.fields((allFields) => {
-    console.log('allFields', allFields)
     options = Object.assign(options, {
       allFields
     })
@@ -232,7 +226,6 @@ function doMapReduce(bucket, {
     })
     log('doUpdate', doUpdate, ctx.processedFields)
     if (doUpdate) {
-      // on stopCondition
       if (!ctx.updated) {
         log('UPDATE BUCKET')
         ctx.updated = true

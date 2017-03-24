@@ -3,25 +3,14 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.addMapReduce = addMapReduce;
 exports.mapReduce = mapReduce;
-
-require('./live');
-
-require('./value');
-
-require('./async');
-
-require('./fields');
-
-var _gun = require('gun/gun');
-
-var _gun2 = _interopRequireDefault(_gun);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-_gun2.default.chain.mapReduce = function (opts, cb) {
-  mapReduce(this, opts, cb);
-};
+function addMapReduce(chain, Gun) {
+  chain.mapReduce = function (opts, cb, putCb, opt) {
+    mapReduce(this, opts, cb, putCb, opt);
+  };
+  return chain;
+}
 
 function mapReduce(bucket) {
   var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
@@ -29,9 +18,7 @@ function mapReduce(bucket) {
   var putCb = arguments[3];
   var opt = arguments[4];
 
-
   bucket.fields(function (allFields) {
-    console.log('allFields', allFields);
     options = Object.assign(options, {
       allFields: allFields
     });
@@ -263,7 +250,6 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
     });
     log('doUpdate', doUpdate, ctx.processedFields);
     if (doUpdate) {
-      // on stopCondition
       if (!ctx.updated) {
         log('UPDATE BUCKET');
         ctx.updated = true;

@@ -1,8 +1,19 @@
 import Gun from 'gun/gun'
 import test from 'ava'
 
-import '../src/value'
-import '../src/async'
+Gun.chainAll = function (...funs) {
+  funs.forEach(fun => fun(Gun.chain, Gun))
+}
+
+import {
+  addValue
+} from '../src/value'
+
+import {
+  $addAll
+} from '../src/async'
+
+Gun.chainAll(addValue, $addAll)
 
 function reverse(str, val) {
   return str ? str.split('').reverse().join('') : str

@@ -1,29 +1,36 @@
 'use strict';
 
-var _gun = require('gun/gun');
-
-var _gun2 = _interopRequireDefault(_gun);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// requires gun v0.5.9+
-_gun2.default.chain.no = function (cb) {
-  var gun = this,
-      chain = gun.chain(),
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.no = no;
+exports.addNo = addNo;
+function no(node, cb) {
+  var chain = node.chain(),
       flag;
-  gun.not(function (a, b, c) {
+
+  node.not(function (a, b, c) {
     flag = true;
     if (!cb) {
       return;
     }
     cb.call(this, a, b, c);
   });
-  gun.get(function (at, ev) {
+
+  node.get(function (at, ev) {
     if (flag) {
       return ev.off();
     }
     chain._.on('in', at);
   });
   return chain;
-};
+}
+
+function addNo(chain, Gun) {
+  chain.no = function (cb) {
+    return no(this, cb);
+  };
+
+  return chain;
+}
 //# sourceMappingURL=no.js.map

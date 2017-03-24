@@ -1,6 +1,6 @@
 {
   "name": "gun-edge",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Gun chain extensions for a higher level DSL and API",
   "main": "index.js",
   "scripts": {
@@ -10,10 +10,9 @@
     "start": "gulp start",
     "build": "gulp build"
   },
-  "repository":
-  {
-    "type" : "git",
-    "url" : "https://github.com/kristianmandrup/gun-edge.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kristianmandrup/gun-edge.git"
   },
   "keywords": [
     "gun",

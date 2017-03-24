@@ -1,5 +1,3 @@
-import Gun from 'gun/gun'
-
-Gun.chain.filter = function (filter) {
+export function filter(node, filter) {
   // map and filter
 }

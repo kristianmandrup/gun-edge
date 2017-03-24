@@ -1,6 +1,4 @@
-import Gun from 'gun/gun'
-
-Gun.chain.each = function () {
-  var each = this.map();
-  return this.val.apply(each, arguments)
+export function each(node) {
+  var each = node.map();
+  return node.val.apply(each, arguments)
 }

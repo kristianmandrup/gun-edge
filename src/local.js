@@ -1,11 +1,13 @@
-import Gun from 'gun/gun'
-
-Gun.chain.local = function (data, cb, opt) {
+export function local  (node, data, cb, opt) {
   opt = opt || {};
   opt.peers = {};
-  return this.put(data, cb, opt)
+  return node.put(data, cb, opt)
 }
 
-// var gun = new Gun().get('example')
-// gun.path('data').local(private)
-// gun.path('data').put(synchronized)
+export function addLocal(chain, Gun) {
+  chain.local = function (data, cb, opt) {
+    return local(this, data, cb, opt)
+  }
+
+  return chain
+}

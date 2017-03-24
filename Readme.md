@@ -5,11 +5,11 @@ Many of the snippets were extracted from [Gun Snippets 0.3](https://github.com/a
 
 Some extra chain methods have been added, such as `mapReduce` and some for working with Promises or async/await (ES7) instead of callbacks.
 
-## Maturity 
+## Maturity
 
 As of version 0.8, not all of the snippet/chain methods have been tested yet.
 
-`.value` had to be tweaked to use `Gun.obj.copy(val)`. 
+`.value` had to be tweaked to use `Gun.obj.copy(val)`.
 This might be needed for other chain methods as well.
 Please help making this library a nice abstraction layer on top of gun.
 
@@ -21,28 +21,38 @@ Please help making this library a nice abstraction layer on top of gun.
 
 Assuming Babel or similar transpiler setup (2017)
 
-import all
-
 ```js
-import 'gun-edge' // import all chain methods
+import Gun from 'gun/gun'
+
+Gun.chainAll = function (...funs) {
+  funs.forEach(fun => fun(Gun.chain, Gun))
+}
+
+import {
+  addValue,
+  $addAll
+} from 'gun-edge'
+
+Gun.chainAll(addValue, $addAll)
 ```
 
-import specific
+Alternatively:
 
 ```js
-import 'gun-edge/dist/async' // import async (Promise) methods
-import 'gun-edge/dist/map-reduce' // import mapReduce chain method
-import 'gun-edge/dist/value' // value chain method
+import {
+  addAll
+} from 'gun-edge'
+
+addAll(Gun)
 ```
 
 You can do the same using `require` for Node.js
 
 ## API extensions
 
-- `Gun.create`
-
 gun chain methods
 
+- `.copy(val)` - make a copy/clone of a value
 - `.date(dateValue)`
 - `.each()`
 - `.live(cb, opt)` - listen to new values like `on` but without the meta data
@@ -55,6 +65,7 @@ gun chain methods
 - `.valueAt(path, cb, opt)` : get value at the `path` (no meta)
 - `.localFields()` - get list of *local* field names (keys) in the bucket
 - `.fields(cb)` - return fields to cb
+- `.inspect(label)` - print value to console (no meta)
 
 Async methods (`Promise` or ES7 `async/await`). Prefix with `$`
 

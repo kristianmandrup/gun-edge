@@ -1,17 +1,35 @@
-import Gun from 'gun/gun'
-
-Gun.chain.$value = function (opt) {
-  var self = this
+export async function $value(node, opt) {
   return new Promise(function (resolve, reject) {
-    self.value(resolve, opt)
+    node.value(resolve, opt)
   })
 }
 
-Gun.chain.$valueAt = function (at, opt) {
-  let path = this.path(at)
+export async function $valueAt(node, at, opt) {
+  let path = node.path(at)
   if (path) {
     return path.$value(opt)
   } else {
     throw new Error(`No such path ${at}`)
   }
 }
+
+import {
+  addValue
+} from '../value'
+
+export function $addValue(chain) {
+  addValue(chain)
+
+  chain.$value = async function (opt) {
+    return await $value(this, opt)
+  }
+
+  chain.$valueAt = async function (opt) {
+    return await $valueAt(this, opt)
+  }
+
+  return chain
+}
+
+
+

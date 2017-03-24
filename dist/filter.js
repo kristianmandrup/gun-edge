@@ -1,12 +1,10 @@
-'use strict';
+"use strict";
 
-var _gun = require('gun/gun');
-
-var _gun2 = _interopRequireDefault(_gun);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-_gun2.default.chain.filter = function (filter) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.filter = filter;
+function filter(node, filter) {
   // map and filter
-};
+}
 //# sourceMappingURL=filter.js.map

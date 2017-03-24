@@ -1,25 +1,42 @@
 'use strict';
 
-var _gun = require('gun/gun');
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.value = value;
+exports.valueAt = valueAt;
+exports.addValue = addValue;
 
-var _gun2 = _interopRequireDefault(_gun);
+var _copy = require('../copy');
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-_gun2.default.chain.value = function (cb, opt) {
-  return this.val(function (val, field) {
-    var v = _gun2.default.obj.copy(val);
+function value(node, cb, opt) {
+  return node.val(function (val, field) {
+    var v = node.copy(val);
     delete v._;
     cb.call(this, v, field);
   }, opt);
-};
+}
 
-_gun2.default.chain.valueAt = function (at, cb, opt) {
-  var node = this.path(at);
-  if (node) {
-    return node.value(cb, opt);
+function valueAt(node, at, cb, opt) {
+  var pathNode = node.path(at);
+  if (pathNode) {
+    return pathNode.value(cb, opt);
   } else {
     throw new Error('No such path ' + at);
   }
-};
+}
+
+function addValue(chain, Gun) {
+  (0, _copy.addCopy)(chain, Gun);
+
+  chain.value = function (cb, opt) {
+    return value(this, cb, opt);
+  };
+
+  chain.valueAt = function (at, cb, opt) {
+    return valueAt(this, at, cb, opt);
+  };
+
+  return chain;
+}
 //# sourceMappingURL=value.js.map

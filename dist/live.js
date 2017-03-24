@@ -1,17 +1,24 @@
-'use strict';
+"use strict";
 
-var _gun = require('gun/gun');
-
-var _gun2 = _interopRequireDefault(_gun);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-_gun2.default.chain.live = function (cb, opt) {
-  return this.on(function (val, field) {
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.live = live;
+exports.addLive = addLive;
+function live(node, cb, opt) {
+  return node.on(function (val, field) {
     if (val) {
       delete val._;
     }
     cb.call(this, val, field);
   }, opt);
-};
+}
+
+function addLive(chain, Gun) {
+  chain.live = function (cb, opt) {
+    return live(this, cb, opt);
+  };
+
+  return chain;
+}
 //# sourceMappingURL=live.js.map
