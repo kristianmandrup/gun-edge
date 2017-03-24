@@ -1,6 +1,12 @@
 import {
-  addAll
+  add,
+  default as addAll
 } from './all'
+
+export {
+  add,
+  addAll
+}
 
 export default function (Gun) {
   Gun.chainAll = function (...funs) {
