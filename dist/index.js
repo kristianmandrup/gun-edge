@@ -18,7 +18,7 @@ require('./live');
 
 require('./local');
 
-require('./mapReduce');
+require('./map-reduce');
 
 require('./no');
 

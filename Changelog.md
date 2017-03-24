@@ -1,6 +1,6 @@
 ## Changelog
 
-### 0.7.8
+### 0.8.0
 
 - Added `context` option for more fine-control
 - Renamed `deleteFromBucket` to `filterBucket`

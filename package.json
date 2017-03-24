@@ -1,6 +1,6 @@
 {
   "name": "gun-edge",
-  "version": "0.7.8",
+  "version": "0.8.0",
   "description": "Gun chain extensions for a higher level DSL and API",
   "main": "index.js",
   "scripts": {

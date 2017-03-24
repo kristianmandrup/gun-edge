@@ -5,6 +5,14 @@ Many of the snippets were extracted from [Gun Snippets 0.3](https://github.com/a
 
 Some extra chain methods have been added, such as `mapReduce` and some for working with Promises or async/await (ES7) instead of callbacks.
 
+## Maturity 
+
+As of version 0.8, not all of the snippet/chain methods have been tested yet.
+
+`.value` had to be tweaked to use `Gun.obj.copy(val)`. 
+This might be needed for other chain methods as well.
+Please help making this library a nice abstraction layer on top of gun.
+
 ## Install
 
 `npm i -S gun-edge`

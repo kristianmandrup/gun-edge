@@ -6,7 +6,6 @@ var _gun2 = _interopRequireDefault(_gun);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// val = Gun.obj.copy(val); delete val._
 _gun2.default.chain.value = function (cb, opt) {
   return this.val(function (val, field) {
     var v = _gun2.default.obj.copy(val);
