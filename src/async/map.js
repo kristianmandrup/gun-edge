@@ -1,9 +1,13 @@
-import Gun from 'gun/gun'
-
-Gun.chain.$map = function (transform, opt) {
-  var self = this
+export function $map(node, transform, opt) {
   return new Promise(function (resolve, reject) {
-    let mapped = self.map(transform, opt).value(v => v)
+    let mapped = node.map(transform, opt).value(v => v)
     resolve(mapped)
   });
+}
+
+export function $addMap(chain) {
+  chain.$map = async function (transform, opt) {
+    return await $map(this, transform, opt)
+  }
+  return chain
 }

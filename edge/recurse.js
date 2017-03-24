@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.recurse = recurse;
-exports.addValue = addValue;
+exports.addRecurse = addRecurse;
 function recurse(node, cb, filter) {
   if (!(filter instanceof Object)) {
     filter = {};
@@ -24,9 +24,9 @@ function recurse(node, cb, filter) {
   return node;
 };
 
-function addValue(chain, Gun) {
+function addRecurse(chain, Gun) {
   chain.recurse = function (cb, filter) {
-    return resurce(this, cb, filter);
+    return recurse(this, cb, filter);
   };
 
   return chain;

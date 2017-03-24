@@ -1,17 +1,25 @@
 'use strict';
 
-var _gun = require('gun/gun');
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.$mapReduce = $mapReduce;
+exports.$addMapReduce = $addMapReduce;
 
-var _gun2 = _interopRequireDefault(_gun);
+var _mapReduce = require('../map-reduce');
 
-require('../map-reduce');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-_gun2.default.chain.$mapReduce = function (options, putCb, opt) {
-  var self = this;
+function $mapReduce(node, options, putCb, opt) {
   return new Promise(function (resolve, reject) {
-    self.mapReduce(options, resolve, putCb, opt);
+    node.mapReduce(options, resolve, putCb, opt);
   });
-};
+}
+
+function $addMapReduce(chain) {
+  (0, _mapReduce.addMapReduce)(chain);
+
+  chain.$mapReduce = async function (options, putCb, opt) {
+    return await $mapReduce(this, options, putCb, opt);
+  };
+  return chain;
+}
 //# sourceMappingURL=map-reduce.js.map

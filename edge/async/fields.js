@@ -1,19 +1,27 @@
 'use strict';
 
-var _gun = require('gun/gun');
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.$fields = $fields;
+exports.$addFields = $addFields;
 
-var _gun2 = _interopRequireDefault(_gun);
+var _value = require('../value');
 
-require('../value');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-_gun2.default.chain.$fields = function () {
-  var self = this;
+function $fields(node) {
   return new Promise(function (resolve, reject) {
-    self.value(function (v) {
+    node.value(function (v) {
       return resolve(Object.keys(v));
     });
   });
-};
+}
+
+function $addFields(chain, Gun) {
+  (0, _value.addValue)(chain, Gun);
+
+  chain.$fields = function (cb, opt) {
+    return $fields(this, cb, opt);
+  };
+  return chain;
+}
 //# sourceMappingURL=fields.js.map

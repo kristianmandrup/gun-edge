@@ -15,13 +15,7 @@ export function valueAt(node, at, cb, opt, Gun) {
   }
 }
 
-import {
-  addCopy
-} from '../copy'
-
 export function addValue(chain, Gun) {
-  addCopy(chain, Gun)
-
   chain.value = function (cb, opt) {
     return value(this, cb, opt, Gun)
   }

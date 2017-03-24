@@ -28,14 +28,14 @@ import {
 
 const chains = {
   $addFields,
+  $addLive,
   $addMap,
   $addMapReduce,
-  $addVal,
-  $addValue,
-  $addLive,
   $addOn,
   $addNo,
-  $addRecurse
+  $addRecurse,
+  $addVal,
+  $addValue
 }
 
 function capitalize(str) {
@@ -45,7 +45,9 @@ function capitalize(str) {
 export function add(Gun, ...names) {
   names.forEach(name => {
     let nameCap = capitalize(name)
-    chains['$add' + nameCap](Gun.chain, Gun)
+    let fun = '$add' + nameCap
+    // console.log('fun', fun)
+    chains[fun](Gun.chain, Gun)
   })
 }
 

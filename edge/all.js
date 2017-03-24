@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.addValue = exports.addRecurse = exports.addOut = exports.addNo = exports.addMapReduce = exports.addLocal = exports.addLive = exports.addInspect = exports.addFilter = exports.addFields = exports.addEach = exports.addDate = exports.addAsync = undefined;
+exports.addValue = exports.addRecurse = exports.addNo = exports.addMapReduce = exports.addLocal = exports.addLive = exports.addInspect = exports.addFields = exports.addEach = exports.addDate = exports.addAsync = undefined;
 exports.add = add;
 
 exports.default = function (Gun) {
@@ -19,8 +19,6 @@ var _date = require('./date');
 var _each = require('./each');
 
 var _fields = require('./fields');
-
-var _filter = require('./filter');
 
 var _inspect = require('./inspect');
 
@@ -39,9 +37,13 @@ var _value = require('./value');
 // import {
 //   addOut
 // } from './out'
+
+// import { addEdge } from './edge'
+
 var chains = {
-  $addAll: _async.$addAll,
+  addAsync: _async.$addAll,
   addCount: _count.addCount,
+  addDate: _date.addDate,
   addEach: _each.addEach,
   addFields: _fields.addFields,
   addInspect: _inspect.addInspect,
@@ -52,7 +54,10 @@ var chains = {
   addRecurse: _recurse.addRecurse,
   addValue: _value.addValue
 };
-// import { addEdge } from './edge'
+// import {
+//   addFilter
+// } from './filter'
+
 
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -65,26 +70,28 @@ function add(Gun) {
 
   names.forEach(function (name) {
     var nameCap = capitalize(name);
-    chains['add' + nameCap](Gun.chain, Gun);
+    var fun = 'add' + nameCap;
+    console.log(fun);
+    chains[fun](Gun.chain, Gun);
   });
   return Gun;
 }
 
-var allNames = ['async', 'date', 'each', 'fields', 'filter', 'inspect', 'live', 'local', 'mapReduce', 'no',
+var allNames = ['async', 'date', 'each', 'fields',
+// 'filter',
+'inspect', 'live', 'local', 'mapReduce', 'no',
 // 'out',
 'recurse', 'value'];
 
-exports.addAsync = addAsync;
+exports.addAsync = _async.$addAll;
 exports.addDate = _date.addDate;
 exports.addEach = _each.addEach;
 exports.addFields = _fields.addFields;
-exports.addFilter = _filter.addFilter;
 exports.addInspect = _inspect.addInspect;
 exports.addLive = _live.addLive;
 exports.addLocal = _local.addLocal;
 exports.addMapReduce = _mapReduce.addMapReduce;
 exports.addNo = _no.addNo;
-exports.addOut = addOut;
 exports.addRecurse = _recurse.addRecurse;
 exports.addValue = _value.addValue;
 //# sourceMappingURL=all.js.map

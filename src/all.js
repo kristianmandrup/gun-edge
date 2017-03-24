@@ -1,5 +1,5 @@
 import {
-  $addAll
+  $addAll as addAsync
 } from './async'
 
 import {
@@ -16,9 +16,9 @@ import {
 import {
   addFields
 } from './fields'
-import {
-  addFilter
-} from './filter'
+// import {
+//   addFilter
+// } from './filter'
 import {
   addInspect
 } from './inspect'
@@ -45,8 +45,9 @@ import {
 } from './value'
 
 const chains = {
-  $addAll,
+  addAsync,
   addCount,
+  addDate,
   addEach,
   addFields,
   addInspect,
@@ -65,7 +66,9 @@ function capitalize(str) {
 export function add(Gun, ...names) {
   names.forEach(name => {
     let nameCap = capitalize(name)
-    chains['add' + nameCap](Gun.chain, Gun)
+    let fun = 'add' + nameCap
+    console.log(fun)
+    chains[fun](Gun.chain, Gun)
   })
   return Gun
 }
@@ -75,7 +78,7 @@ const allNames = [
   'date',
   'each',
   'fields',
-  'filter',
+  // 'filter',
   'inspect',
   'live',
   'local',
@@ -91,13 +94,13 @@ export {
   addDate,
   addEach,
   addFields,
-  addFilter,
+  // addFilter,
   addInspect,
   addLive,
   addLocal,
   addMapReduce,
   addNo,
-  addOut,
+  // addOut,
   addRecurse,
   addValue
 }

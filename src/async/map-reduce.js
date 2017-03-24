@@ -1,9 +1,18 @@
-import Gun from 'gun/gun'
-import '../map-reduce'
+import {
+  addMapReduce
+} from '../map-reduce'
 
-Gun.chain.$mapReduce = function (options, putCb, opt) {
-  var self = this
+export function $mapReduce(node, options, putCb, opt) {
   return new Promise(function (resolve, reject) {
-    self.mapReduce(options, resolve, putCb, opt)
+    node.mapReduce(options, resolve, putCb, opt)
   })
+}
+
+export function $addMapReduce(chain) {
+  addMapReduce(chain)
+
+  chain.$mapReduce = async function (options, putCb, opt) {
+    return await $mapReduce(this, options, putCb, opt)
+  }
+  return chain
 }

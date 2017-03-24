@@ -26,14 +26,14 @@ var _recurse = require('./recurse');
 
 var chains = {
   $addFields: _fields.$addFields,
+  $addLive: _live.$addLive,
   $addMap: _map.$addMap,
   $addMapReduce: _mapReduce.$addMapReduce,
-  $addVal: _val.$addVal,
-  $addValue: _value.$addValue,
-  $addLive: _live.$addLive,
   $addOn: _on.$addOn,
   $addNo: _no.$addNo,
-  $addRecurse: _recurse.$addRecurse
+  $addRecurse: _recurse.$addRecurse,
+  $addVal: _val.$addVal,
+  $addValue: _value.$addValue
 };
 
 function capitalize(str) {
@@ -47,7 +47,9 @@ function add(Gun) {
 
   names.forEach(function (name) {
     var nameCap = capitalize(name);
-    chains['$add' + nameCap](Gun.chain, Gun);
+    var fun = '$add' + nameCap;
+    // console.log('fun', fun)
+    chains[fun](Gun.chain, Gun);
   });
 }
 

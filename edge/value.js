@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -6,9 +6,6 @@ Object.defineProperty(exports, "__esModule", {
 exports.value = value;
 exports.valueAt = valueAt;
 exports.addValue = addValue;
-
-var _copy = require('../copy');
-
 function value(node, cb, opt, Gun) {
   return node.val(function (val, field) {
     var v = Gun.node.copy(val);
@@ -22,13 +19,11 @@ function valueAt(node, at, cb, opt, Gun) {
   if (pathNode) {
     value(pathNode, cb, opt, Gun);
   } else {
-    throw new Error('No such path ' + at);
+    throw new Error("No such path " + at);
   }
 }
 
 function addValue(chain, Gun) {
-  (0, _copy.addCopy)(chain, Gun);
-
   chain.value = function (cb, opt) {
     return value(this, cb, opt, Gun);
   };
