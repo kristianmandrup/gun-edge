@@ -19,7 +19,12 @@ import {
 import {
   $addOn
 } from './on'
-
+import {
+  $addNo
+} from './no'
+import {
+  $addRecurse
+} from './recurse'
 
 const chains = {
   $addFields,
@@ -28,7 +33,9 @@ const chains = {
   $addVal,
   $addValue,
   $addLive,
-  $addOn
+  $addOn,
+  $addNo,
+  $addRecurse
 }
 
 function capitalize(str) {
@@ -49,7 +56,9 @@ const allNames = [
   'val',
   'value',
   'live',
-  'on'
+  'on',
+  'no',
+  'recurse'
 ]
 
 export function $addAll(Gun) {

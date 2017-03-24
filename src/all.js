@@ -1,11 +1,10 @@
 import {
   $addAll
-}
-from './async'
+} from './async'
 
 import {
-  addCopy
-} from './copy'
+  addCount
+} from './count'
 import {
   addDate
 } from './date'
@@ -47,8 +46,7 @@ import {
 
 const chains = {
   $addAll,
-  addCopy,
-  addCreate,
+  addCount,
   addEach,
   addFields,
   addInspect,
@@ -74,7 +72,6 @@ export function add(Gun, ...names) {
 
 const allNames = [
   'async',
-  'copy',
   'date',
   'each',
   'fields',
@@ -91,7 +88,6 @@ const allNames = [
 
 export {
   addAsync,
-  addCopy,
   addDate,
   addEach,
   addFields,

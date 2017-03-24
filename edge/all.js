@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.addValue = exports.addRecurse = exports.addOut = exports.addNo = exports.addMapReduce = exports.addLocal = exports.addLive = exports.addInspect = exports.addFilter = exports.addFields = exports.addEach = exports.addDate = exports.addCopy = exports.addAsync = undefined;
+exports.addValue = exports.addRecurse = exports.addOut = exports.addNo = exports.addMapReduce = exports.addLocal = exports.addLive = exports.addInspect = exports.addFilter = exports.addFields = exports.addEach = exports.addDate = exports.addAsync = undefined;
 exports.add = add;
 
 exports.default = function (Gun) {
@@ -12,7 +12,7 @@ exports.default = function (Gun) {
 
 var _async = require('./async');
 
-var _copy = require('./copy');
+var _count = require('./count');
 
 var _date = require('./date');
 
@@ -41,8 +41,7 @@ var _value = require('./value');
 // } from './out'
 var chains = {
   $addAll: _async.$addAll,
-  addCopy: _copy.addCopy,
-  addCreate: addCreate,
+  addCount: _count.addCount,
   addEach: _each.addEach,
   addFields: _fields.addFields,
   addInspect: _inspect.addInspect,
@@ -71,12 +70,11 @@ function add(Gun) {
   return Gun;
 }
 
-var allNames = ['async', 'copy', 'date', 'each', 'fields', 'filter', 'inspect', 'live', 'local', 'mapReduce', 'no',
+var allNames = ['async', 'date', 'each', 'fields', 'filter', 'inspect', 'live', 'local', 'mapReduce', 'no',
 // 'out',
 'recurse', 'value'];
 
 exports.addAsync = addAsync;
-exports.addCopy = _copy.addCopy;
 exports.addDate = _date.addDate;
 exports.addEach = _each.addEach;
 exports.addFields = _fields.addFields;

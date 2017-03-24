@@ -50,14 +50,14 @@ require('gun-edge')(Gun)
 
 gun chain methods
 
+- `.count(numFun)` - create a [CRDT](https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type) counter, see [counter](https://github.com/amark/gun/wiki/Snippets-(v0.3.x)#-crdt-counter)
 - `.copy(val)` - make a copy/clone of a value
-- `.date(dateValue)`
-- `.each()`
+- `.date(dateValue)` - date field, see [date](https://github.com/amark/gun/wiki/Snippets-(v0.3.x)#date)
+- `.each()` - see [each](https://github.com/amark/gun/wiki/Snippets-(v0.3.x)#guneach)
 - `.live(cb, opt)` - listen to new values like `on` but without the meta data
 - `.local(data, cb, opt)` - store locally only, no peer sync
 - `.mapReduce(options, cb, putCb, opt)` - mapReduce on a bucket (see below)
-- `.no(cb)`
-- `.out(navOpts)`
+- `.no(cb)` - see [no](https://github.com/amark/gun/wiki/Snippets-(v0.3.x)#-no)
 - `.recurse(cb, filter)` - recursively navigate bucket graph/tree structure
 - `.value(cb, opt)` - get the node value (no meta)
 - `.valueAt(path, cb, opt)` : get value at the `path` (no meta)
@@ -65,22 +65,31 @@ gun chain methods
 - `.fields(cb)` - return fields to cb
 - `.inspect(label)` - print value to console (no meta)
 
-Async methods (`Promise` or ES7 `async/await`). Prefix with `$`
+WIP:
+- `.out(navOpts)` - traverse edge (WIP)
+- `edge` or `link`  - for linking nodes and traversing links/edges
+- `filter` - filter fields
+
+Promise enabled methods (ie. ES6 `Promise` or ES7 `async/await`), always prefixed with `$`.
 
 - `.$fields(opt)` - get fields (ie. property names)
+- `.$live(opt)` - live listener to field updates (no meta)
+- `.$mapReduce(options, putCb, opt)` - map/reduce
+- `.$map(transform, opt)` - map and optionally transform (broken in gun?)
+- `.$no(opt)` - blocks if no data, see [no](https://github.com/amark/gun/wiki/Snippets-(v0.3.x)#-no)
+- `.$on(opt)` - listen to field updates
 - `.$val(opt)` - full value (with meta)
 - `.$value(opt)` - get value (no meta)
 - `.$valueAt(path, opt)` - get value at the `path` (no meta)
-- `.$map(transform, opt)` - map and optionally transform (broken in gun?)
-- `.$mapReduce(options, putCb, opt)` - mapReduce
-
-TODO:
-- `$live`
-- `$on`
-- `$recurse`
-- ...
+- `.$recurse(filter)` - recursive filter
 
 Feel free to come with suggestions or make a PR :)
+
+### Extras
+
+`Gun.obj.copy(val)` - copy a value
+`Gun.fns.is(data)` - check if Gun node?
+`gun.not((a, b, c) => {})` - ??
 
 ## mapReduce
 

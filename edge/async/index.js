@@ -20,6 +20,10 @@ var _live = require('./live');
 
 var _on = require('./on');
 
+var _no = require('./no');
+
+var _recurse = require('./recurse');
+
 var chains = {
   $addFields: _fields.$addFields,
   $addMap: _map.$addMap,
@@ -27,7 +31,9 @@ var chains = {
   $addVal: _val.$addVal,
   $addValue: _value.$addValue,
   $addLive: _live.$addLive,
-  $addOn: _on.$addOn
+  $addOn: _on.$addOn,
+  $addNo: _no.$addNo,
+  $addRecurse: _recurse.$addRecurse
 };
 
 function capitalize(str) {
@@ -45,7 +51,7 @@ function add(Gun) {
   });
 }
 
-var allNames = ['fields', 'map', 'mapReduce', 'val', 'value', 'live', 'on'];
+var allNames = ['fields', 'map', 'mapReduce', 'val', 'value', 'live', 'on', 'no', 'recurse'];
 
 function $addAll(Gun) {
   add.apply(undefined, [Gun].concat(allNames));
