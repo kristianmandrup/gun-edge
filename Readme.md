@@ -102,6 +102,7 @@ Feel free to come with suggestions or make a PR :)
 `Gun.obj.copy(val)` - copy a value
 `Gun.fns.is(data)` - check if Gun node?
 `gun.not((a, b, c) => {})` - ??
+`Gun.text.random()` - random text
 
 ## mapReduce
 

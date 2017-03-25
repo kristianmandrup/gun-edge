@@ -72,7 +72,10 @@ function add(Gun) {
     var nameCap = capitalize(name);
     var fun = 'add' + nameCap;
     console.log(fun);
-    chains[fun](Gun.chain, Gun);
+    chains[fun]({
+      chain: Gun.chain,
+      Gun: Gun
+    });
   });
   return Gun;
 }

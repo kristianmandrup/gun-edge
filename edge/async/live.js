@@ -11,7 +11,9 @@ function $live(node, opt) {
   });
 }
 
-function $addLive(chain) {
+function $addLive(_ref) {
+  var chain = _ref.chain;
+
   chain.$live = async function (opt) {
     return await $live(this, opt);
   };

@@ -3,7 +3,9 @@ export function each(node) {
   return node.val.apply(each, arguments)
 }
 
-export function addEach(chain, Gun) {
+export function addEach({
+  chain
+}) {
   chain.each = function (cb, opt) {
     return each(this)
   }

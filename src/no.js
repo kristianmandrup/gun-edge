@@ -19,7 +19,9 @@ export function no(node, cb) {
   return chain;
 }
 
-export function addNo(chain, Gun) {
+export function addNo({
+  chain
+}) {
   chain.no = function (cb) {
     return no(this, cb)
   }

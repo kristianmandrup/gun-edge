@@ -5,7 +5,16 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.addMapReduce = addMapReduce;
 exports.mapReduce = mapReduce;
-function addMapReduce(chain, Gun) {
+
+var _gun = require('gun/gun');
+
+var _gun2 = _interopRequireDefault(_gun);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function addMapReduce(_ref) {
+  var chain = _ref.chain;
+
   chain.mapReduce = function (opts, cb, putCb, opt) {
     mapReduce(this, opts, cb, putCb, opt);
   };
@@ -38,31 +47,31 @@ function defaultLogger(fun, logging) {
   };
 }
 
-function doMapReduce(bucket, _ref, cb, putCb, opt) {
-  var newField = _ref.newField,
-      newValue = _ref.newValue,
-      value = _ref.value,
-      transform = _ref.transform,
-      filter = _ref.filter,
-      filters = _ref.filters,
-      _ref$fields = _ref.fields,
-      fields = _ref$fields === undefined ? [] : _ref$fields,
-      _ref$ignoreFields = _ref.ignoreFields,
-      ignoreFields = _ref$ignoreFields === undefined ? [] : _ref$ignoreFields,
-      allFields = _ref.allFields,
-      _ref$iterator = _ref.iterator,
-      iterator = _ref$iterator === undefined ? 'val' : _ref$iterator,
-      validField = _ref.validField,
-      processWhile = _ref.processWhile,
-      updateWhen = _ref.updateWhen,
-      updateBucket = _ref.updateBucket,
-      filterBucket = _ref.filterBucket,
-      saveChanges = _ref.saveChanges,
-      done = _ref.done,
-      _ref$logging = _ref.logging,
-      logging = _ref$logging === undefined ? false : _ref$logging,
-      logger = _ref.logger,
-      context = _ref.context;
+function doMapReduce(bucket, _ref2, cb, putCb, opt) {
+  var newField = _ref2.newField,
+      newValue = _ref2.newValue,
+      value = _ref2.value,
+      transform = _ref2.transform,
+      filter = _ref2.filter,
+      filters = _ref2.filters,
+      _ref2$fields = _ref2.fields,
+      fields = _ref2$fields === undefined ? [] : _ref2$fields,
+      _ref2$ignoreFields = _ref2.ignoreFields,
+      ignoreFields = _ref2$ignoreFields === undefined ? [] : _ref2$ignoreFields,
+      allFields = _ref2.allFields,
+      _ref2$iterator = _ref2.iterator,
+      iterator = _ref2$iterator === undefined ? 'val' : _ref2$iterator,
+      validField = _ref2.validField,
+      processWhile = _ref2.processWhile,
+      updateWhen = _ref2.updateWhen,
+      updateBucket = _ref2.updateBucket,
+      filterBucket = _ref2.filterBucket,
+      saveChanges = _ref2.saveChanges,
+      done = _ref2.done,
+      _ref2$logging = _ref2.logging,
+      logging = _ref2$logging === undefined ? false : _ref2$logging,
+      logger = _ref2.logger,
+      context = _ref2.context;
 
 
   var ctx = {
@@ -91,10 +100,10 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
 
   log('ctx', ctx);
 
-  function defaultProcessWhile(_ref2) {
-    var field = _ref2.field,
-        val = _ref2.val,
-        ctx = _ref2.ctx;
+  function defaultProcessWhile(_ref3) {
+    var field = _ref3.field,
+        val = _ref3.val,
+        ctx = _ref3.ctx;
 
     var reVisit = ctx.visited[field];
     var decision = !reVisit;
@@ -111,10 +120,10 @@ function doMapReduce(bucket, _ref, cb, putCb, opt) {
     return valid && !invalid;
   }
 
-  function defaultUpdateWhen(_ref3) {
-    var field = _ref3.field,
-        val = _ref3.val,
-        ctx = _ref3.ctx;
+  function defaultUpdateWhen(_ref4) {
+    var field = _ref4.field,
+        val = _ref4.val,
+        ctx = _ref4.ctx;
 
     var processedAll = ctx.processedFields >= ctx.allFields.length;
     var visitedAll = ctx.allFields.every(function (f) {

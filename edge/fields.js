@@ -22,7 +22,9 @@ function fields(node, cb, opt) {
   }, opt);
 }
 
-function addFields(chain, Gun) {
+function addFields(_ref) {
+  var chain = _ref.chain;
+
   chain.fields = function (cb, opt) {
     return fields(this, cb, opt);
   };

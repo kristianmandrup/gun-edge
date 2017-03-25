@@ -8,7 +8,9 @@ export function fields(node, cb, opt) {
   node.value(v => cb(Object.keys(v)), opt)
 }
 
-export function addFields(chain, Gun) {
+export function addFields({
+  chain
+}) {
   chain.fields = function (cb, opt) {
     return fields(this, cb, opt)
   }

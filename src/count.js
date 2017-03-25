@@ -11,7 +11,10 @@ export function count(node, num) {
   return node;
 }
 
-export function addCount(chain, Gun) {
+export function addCount({
+  chain,
+  Gun
+}) {
   chain.count = function (num) {
     return count(this, num)
   }

@@ -11,7 +11,9 @@ function $recurse(node, filter) {
   });
 }
 
-function $addRecurse(chain) {
+function $addRecurse(_ref) {
+  var chain = _ref.chain;
+
   chain.$recurse = async function (filter) {
     return await $recurse(this, filter);
   };

@@ -10,7 +10,9 @@ function each(node) {
   return node.val.apply(each, arguments);
 }
 
-function addEach(chain, Gun) {
+function addEach(_ref) {
+  var chain = _ref.chain;
+
   chain.each = function (cb, opt) {
     return each(this);
   };

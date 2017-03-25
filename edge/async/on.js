@@ -11,7 +11,9 @@ function $on(node, opt) {
   });
 }
 
-function $addOn(chain) {
+function $addOn(_ref) {
+  var chain = _ref.chain;
+
   chain.$on = async function (opt) {
     return await $on(this, opt);
   };

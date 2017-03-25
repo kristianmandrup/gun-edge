@@ -11,11 +11,12 @@ function $no(node) {
   });
 }
 
-function $addNo(chain) {
+function $addNo(_ref) {
+  var chain = _ref.chain;
+
   chain.$no = async function () {
     return await $no(this);
   };
-
   return chain;
 }
 //# sourceMappingURL=no.js.map

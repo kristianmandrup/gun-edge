@@ -14,7 +14,9 @@ function $map(node, transform, opt) {
   });
 }
 
-function $addMap(chain) {
+function $addMap(_ref) {
+  var chain = _ref.chain;
+
   chain.$map = async function (transform, opt) {
     return await $map(this, transform, opt);
   };

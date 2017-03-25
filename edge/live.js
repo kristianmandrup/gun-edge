@@ -1,13 +1,20 @@
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.live = live;
 exports.addLive = addLive;
-function live(node, cb, opt, Gun) {
+
+var _gun = require('gun/gun');
+
+var _gun2 = _interopRequireDefault(_gun);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function live(node, cb, opt) {
   return node.on(function (val, field) {
-    var v = Gun.node.copy(val);
+    var v = _gun2.default.obj.copy(val);
     if (v) {
       delete v._;
     }
@@ -15,9 +22,11 @@ function live(node, cb, opt, Gun) {
   }, opt);
 }
 
-function addLive(chain, Gun) {
+function addLive(_ref) {
+  var chain = _ref.chain;
+
   chain.live = function (cb, opt) {
-    return live(this, cb, opt, Gun);
+    return live(this, cb, opt);
   };
 
   return chain;

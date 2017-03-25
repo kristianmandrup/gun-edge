@@ -17,7 +17,9 @@ export function recurse(node, cb, filter) {
   return node;
 };
 
-export function addRecurse(chain, Gun) {
+export function addRecurse({
+  chain
+}) {
   chain.recurse = function (cb, filter) {
     return recurse(this, cb, filter)
   }

@@ -16,8 +16,12 @@ function $fields(node) {
   });
 }
 
-function $addFields(chain, Gun) {
-  (0, _value.addValue)(chain, Gun);
+function $addFields(_ref) {
+  var chain = _ref.chain;
+
+  (0, _value.addValue)({
+    chain: chain
+  });
 
   chain.$fields = function (cb, opt) {
     return $fields(this, cb, opt);

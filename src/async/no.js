@@ -4,10 +4,11 @@ export function $no(node) {
   })
 }
 
-export function $addNo(chain) {
+export function $addNo({
+  chain
+}) {
   chain.$no = async function () {
     return await $no(this)
   }
-
   return chain
 }

@@ -4,7 +4,9 @@ export function $val(node, opt) {
   })
 }
 
-export function $addVal(chain) {
+export function $addVal({
+  chain
+}) {
   chain.$val = async function (opt) {
     return await $val(this, opt)
   }

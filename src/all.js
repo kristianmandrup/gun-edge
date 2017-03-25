@@ -68,7 +68,10 @@ export function add(Gun, ...names) {
     let nameCap = capitalize(name)
     let fun = 'add' + nameCap
     console.log(fun)
-    chains[fun](Gun.chain, Gun)
+    chains[fun]({
+      chain: Gun.chain,
+      Gun
+    })
   })
   return Gun
 }

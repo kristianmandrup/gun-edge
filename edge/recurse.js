@@ -24,7 +24,9 @@ function recurse(node, cb, filter) {
   return node;
 };
 
-function addRecurse(chain, Gun) {
+function addRecurse(_ref) {
+  var chain = _ref.chain;
+
   chain.recurse = function (cb, filter) {
     return recurse(this, cb, filter);
   };

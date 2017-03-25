@@ -18,7 +18,10 @@ function count(node, num) {
   return node;
 }
 
-function addCount(chain, Gun) {
+function addCount(_ref) {
+  var chain = _ref.chain,
+      Gun = _ref.Gun;
+
   chain.count = function (num) {
     return count(this, num);
   };

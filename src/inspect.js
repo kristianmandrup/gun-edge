@@ -8,7 +8,10 @@ export function inspect(node, label) {
   }), opt)
 }
 
-export function addInspect(chain) {
+export function addInspect({
+  chain,
+  Gun
+}) {
   // addValue(chain, Gun)
 
   chain.inspect = function (label) {

@@ -11,7 +11,9 @@ function local(node, data, cb, opt) {
   return node.put(data, cb, opt);
 }
 
-function addLocal(chain, Gun) {
+function addLocal(_ref) {
+  var chain = _ref.chain;
+
   chain.local = function (data, cb, opt) {
     return local(this, data, cb, opt);
   };

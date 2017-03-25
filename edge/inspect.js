@@ -14,7 +14,10 @@ function inspect(node, label) {
   }, opt);
 }
 
-function addInspect(chain) {
+function addInspect(_ref) {
+  var chain = _ref.chain,
+      Gun = _ref.Gun;
+
   // addValue(chain, Gun)
 
   chain.inspect = function (label) {

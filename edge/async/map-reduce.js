@@ -14,8 +14,12 @@ function $mapReduce(node, options, putCb, opt) {
   });
 }
 
-function $addMapReduce(chain) {
-  (0, _mapReduce.addMapReduce)(chain);
+function $addMapReduce(_ref) {
+  var chain = _ref.chain;
+
+  (0, _mapReduce.addMapReduce)({
+    chain: chain
+  });
 
   chain.$mapReduce = async function (options, putCb, opt) {
     return await $mapReduce(this, options, putCb, opt);

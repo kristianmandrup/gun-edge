@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -6,30 +6,39 @@ Object.defineProperty(exports, "__esModule", {
 exports.value = value;
 exports.valueAt = valueAt;
 exports.addValue = addValue;
-function value(node, cb, opt, Gun) {
+
+var _gun = require('gun/gun');
+
+var _gun2 = _interopRequireDefault(_gun);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function value(node, cb, opt) {
   return node.val(function (val, field) {
-    var v = Gun.node.copy(val);
+    var v = _gun2.default.obj.copy(val);
     delete v._;
     cb.call(this, v, field);
   }, opt);
 }
 
-function valueAt(node, at, cb, opt, Gun) {
+function valueAt(node, at, cb, opt) {
   var pathNode = node.path(at);
   if (pathNode) {
-    value(pathNode, cb, opt, Gun);
+    value(pathNode, cb, opt);
   } else {
-    throw new Error("No such path " + at);
+    throw new Error('No such path ' + at);
   }
 }
 
-function addValue(chain, Gun) {
+function addValue(_ref) {
+  var chain = _ref.chain;
+
   chain.value = function (cb, opt) {
-    return value(this, cb, opt, Gun);
+    return value(this, cb, opt);
   };
 
   chain.valueAt = function (at, cb, opt) {
-    return valueAt(this, at, cb, opt, Gun);
+    return valueAt(this, at, cb, opt);
   };
 
   return chain;

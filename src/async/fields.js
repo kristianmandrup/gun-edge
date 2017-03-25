@@ -8,8 +8,12 @@ import {
   addValue
 } from '../value'
 
-export function $addFields(chain, Gun) {
-  addValue(chain, Gun)
+export function $addFields({
+  chain,
+}) {
+  addValue({
+    chain
+  })
 
   chain.$fields = function (cb, opt) {
     return $fields(this, cb, opt)

@@ -11,7 +11,9 @@ function $val(node, opt) {
   });
 }
 
-function $addVal(chain) {
+function $addVal(_ref) {
+  var chain = _ref.chain;
+
   chain.$val = async function (opt) {
     return await $val(this, opt);
   };

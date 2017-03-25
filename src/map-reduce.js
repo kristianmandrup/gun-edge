@@ -1,4 +1,8 @@
-export function addMapReduce(chain, Gun) {
+import Gun from 'gun/gun'
+
+export function addMapReduce({
+  chain
+}) {
   chain.mapReduce = function (opts, cb, putCb, opt) {
     mapReduce(this, opts, cb, putCb, opt)
   }

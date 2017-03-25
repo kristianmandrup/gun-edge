@@ -4,7 +4,9 @@ export function $recurse(node, filter) {
   })
 }
 
-export function $addRecurse(chain) {
+export function $addRecurse({
+  chain
+}) {
   chain.$recurse = async function (filter) {
     return await $recurse(this, filter)
   }

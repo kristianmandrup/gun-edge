@@ -5,7 +5,9 @@ export function $map(node, transform, opt) {
   });
 }
 
-export function $addMap(chain) {
+export function $addMap({
+  chain
+}) {
   chain.$map = async function (transform, opt) {
     return await $map(this, transform, opt)
   }

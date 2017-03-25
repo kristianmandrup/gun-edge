@@ -4,7 +4,9 @@ export function $on(node, opt) {
   })
 }
 
-export function $addOn(chain) {
+export function $addOn({
+  chain
+}) {
   chain.$on = async function (opt) {
     return await $on(this, opt)
   }

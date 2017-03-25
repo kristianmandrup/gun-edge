@@ -26,7 +26,9 @@ function no(node, cb) {
   return chain;
 }
 
-function addNo(chain, Gun) {
+function addNo(_ref) {
+  var chain = _ref.chain;
+
   chain.no = function (cb) {
     return no(this, cb);
   };
