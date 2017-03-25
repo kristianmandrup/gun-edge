@@ -116,6 +116,8 @@ Feel free to come with suggestions or make a PR :)
 
 We also want to support typical streams, such as `RxJS` and `xstream` (cycle). See [es6-generators-observable-async-flow-control](https://medium.com/javascript-scene/the-hidden-power-of-es6-generators-observable-async-flow-control-cfa4c7f31435#.icez856w3) perhaps using [IxJS](https://github.com/ReactiveX/IxJS)
 
+Please read [A General Theory of Reactivity](https://www.gitbook.com/book/kriskowal/gtor/details) by *Kris Kowal*
+
 **WIP**
 
 - `.out(navOpts, cb)` - traverse edge (WIP)
