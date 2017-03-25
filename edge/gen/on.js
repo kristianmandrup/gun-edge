@@ -8,36 +8,31 @@ exports.$addOn = $addOn;
 
 var _marked = [$on].map(regeneratorRuntime.mark);
 
-function $on(node, _ref) {
-  var condition = _ref.condition,
-      opt = _ref.opt;
-  var c;
+function $on(node) {
+  var nextResolve, promise, resolveAndReload;
   return regeneratorRuntime.wrap(function $on$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
-          c = function c() {
-            return true;
+          nextResolve = void 0, promise = void 0;
+
+          resolveAndReload = function resolveAndReload(value) {
+            if (nextResolve) nextResolve({
+              value: value,
+              next: function next() {
+                return promise;
+              }
+            });
+            promise = new Promise(function (resolve) {
+              return nextResolve = resolve;
+            });
+            return promise;
           };
 
-          condition = condition || c;
+          resolveAndReload();
+          node.on(resolveAndReload);
 
-        case 2:
-          if (!condition(node)) {
-            _context.next = 7;
-            break;
-          }
-
-          _context.next = 5;
-          return new Promise(function (resolve, reject) {
-            node.on(resolve, opt);
-          });
-
-        case 5:
-          _context.next = 2;
-          break;
-
-        case 7:
+        case 4:
         case "end":
           return _context.stop();
       }
@@ -45,21 +40,16 @@ function $on(node, _ref) {
   }, _marked[0], this);
 }
 
-function $addOn(_ref2) {
-  var chain = _ref2.chain;
+function $addOn(_ref) {
+  var chain = _ref.chain;
 
-  chain.$on = regeneratorRuntime.mark(function _callee(_ref3) {
-    var condition = _ref3.condition,
-        opt = _ref3.opt;
+  chain.$on = regeneratorRuntime.mark(function _callee() {
     return regeneratorRuntime.wrap(function _callee$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
             _context2.next = 2;
-            return $on(this, {
-              condition: condition,
-              opt: opt
-            });
+            return $on(this);
 
           case 2:
           case "end":
@@ -68,7 +58,6 @@ function $addOn(_ref2) {
       }
     }, _callee, this);
   });
-
   return chain;
 }
 //# sourceMappingURL=on.js.map
