@@ -94,39 +94,10 @@ Promise enabled methods (ie. ES6 `Promise` or ES7 `async/await`), always prefixe
 - `.$valueAt(path, opt)` - get value at the `path` (no meta)
 - `.$recurse(filter)` - recursive filter
 
-**Experimental (WIP): Generators and Iterables**
+**Generators and Iterables**
 
-- `.$on(opt)` - listen to field updates
-- `.$live(opt)` - live listener to field updates (no meta)
-- `.$map(transform, opt)` - map and optionally transform (broken in gun?)
-
-Generators can be used as [iterables](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators)
-
-The iterators are currently implemtented as `yield` generator factories, where `condition` by default always returns `true` causing an infinite loop.
-
-```js
-  while (condition(node)) {
-    yield new Promise(function (resolve, reject) {
-      node.on(resolve, opt)
-    })
-  }
-```
-
-The `of` iterator when then continually calls `.next()` on the generator, which will continue from the last `yield` and return the value of the next `yield`. Each yield will return a "generated" promise, which we can then `await` (or `.then()`) on.
-
-```js
-for (let value of node.$map()) {
-  console.log(await value);
-}
-```
-
-Experimental usage:
-
-```js
-import generators from 'gun-edge/edge/gen'
-generators(Gun)
-
-```
+In order to use Generators with Iterators, Gun nodes would need to provide a `next()` method which
+returns an object with `value` and `done` keys.
 
 Also see [iterator of promises](https://gist.github.com/domenic/5987999) and [async iterators](https://kriskowal.gitbooks.io/gtor/content/async-iterators.html)
 
@@ -134,9 +105,27 @@ Feel free to come with suggestions or make a PR :)
 
 **Streams for superior Async flow control**
 
-We also want to support typical streams, such as `RxJS` and `xstream` (cycle). See [es6-generators-observable-async-flow-control](https://medium.com/javascript-scene/the-hidden-power-of-es6-generators-observable-async-flow-control-cfa4c7f31435#.icez856w3) perhaps using [IxJS](https://github.com/ReactiveX/IxJS)
+Experimental `xstream` support is included, extracted from [cycle-gun](https://github.com/JuniperChicago/cycle-gun)
 
-Please read [A General Theory of Reactivity](https://www.gitbook.com/book/kriskowal/gtor/details) by *Kris Kowal*
+```js
+import { addStream } from 'gun-edge/edge/xstream'
+addStream(Gun.chain)
+
+let mark = gun.get('mark)
+mark.stream()
+  .map((event) => {
+    console.log('received', {
+      event
+    })
+  })
+
+// will count from 0 to 5 at 200ms interval, each time making
+// a new put with current counter value
+mark.timed({
+  max: 5,
+  interval: 200
+})
+```
 
 **WIP**
 
