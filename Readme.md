@@ -91,6 +91,13 @@ Promise enabled methods (ie. ES6 `Promise` or ES7 `async/await`), always prefixe
 
 Feel free to come with suggestions or make a PR :)
 
+**TODO**
+
+Iterator methods must be wrapped in Generators as well. We also want to support typical streams,
+such as `RxJS` and `xstream` (cycle)
+
+- Generators and Streams
+
 **WIP**
 
 - `.out(navOpts, cb)` - traverse edge (WIP)
