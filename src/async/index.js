@@ -17,6 +17,9 @@ import {
   $addLive
 } from './live'
 import {
+  $addIterate
+} from './iterate'
+import {
   $addOn
 } from './on'
 import {
@@ -29,6 +32,7 @@ import {
 const chains = {
   $addFields,
   $addLive,
+  $addIterate,
   $addMap,
   $addMapReduce,
   $addOn,
@@ -60,6 +64,7 @@ const allNames = [
   'val',
   'value',
   'live',
+  'iterate',
   'on',
   'no',
   'recurse'

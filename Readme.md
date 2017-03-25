@@ -1,17 +1,18 @@
 # Gun edge
 
-Extra DSL convenience extensions for [Gun.js](http://gun.js.org/)
-Many of the snippets were extracted from [Gun Snippets 0.3](https://github.com/amark/gun/wiki/Snippets-(v0.3.x))
+Extra DSL extensions for [Gun.js](http://gun.js.org/)
 
-Some extra chain methods have been added, such as `mapReduce` and some for working with Promises or async/await (ES7) instead of callbacks.
+Many of the snippets were extracted from [Gun Snippets 0.3.x](https://github.com/amark/gun/wiki/Snippets-(v0.3.x)) and upgraded to work with Gun +0.6
+
+Some extra chain methods have been added, such as `mapReduce` and `iterator`.
+
+Most async methods now come with a ES6 Promises or async/await (ES7) variant.
+The Promise methods are prefixed with `$`.
 
 ## Maturity
 
-As of version 0.8, not all of the snippet/chain methods have been tested yet.
-
-`.value` had to be tweaked to use `Gun.obj.copy(val)`.
-This might be needed for other chain methods as well.
-Please help making this library a nice abstraction layer on top of gun.
+As of version 0.8.x, not all of the chain methods have been fully tested yet.
+Please help test them out and/or add more tests. Thanks.
 
 ## Install
 
@@ -53,7 +54,7 @@ addInspect(Gun.chain)
 Using `require`
 
 ```js
-import Gun from 'gun/gun'
+const Gun = require('gun/gun')
 require('gun-edge')(Gun)
 ```
 
@@ -61,15 +62,21 @@ require('gun-edge')(Gun)
 
 Chain methods available:
 
+**Iteration**
+
+- `.each()` - see [each](https://github.com/amark/gun/wiki/Snippets-(v0.3.x)#guneach)
+- `.live(cb, opt)` - listen to new values like `on` but without the meta data
+- `.iterate(opts)` - iterate and update a node recursively using a timeout (see `async-iterator.test.js`)
+- `.mapReduce(options, cb, putCb, opt)` - mapReduce on a bucket (see below)
+- `.recurse(cb, filter)` - recursively navigate bucket graph/tree structure
+
+**Operations**
+
 - `.count(numFun)` - create a [CRDT](https://en.wikipedia.org/wiki/Conflict-free_replicated_data_type) counter, see [counter](https://github.com/amark/gun/wiki/Snippets-(v0.3.x)#-crdt-counter)
 - `.copy(val)` - make a copy/clone of a value
 - `.date(dateValue)` - date field, see [date](https://github.com/amark/gun/wiki/Snippets-(v0.3.x)#date)
-- `.each()` - see [each](https://github.com/amark/gun/wiki/Snippets-(v0.3.x)#guneach)
-- `.live(cb, opt)` - listen to new values like `on` but without the meta data
 - `.local(data, cb, opt)` - store locally only, no peer sync
-- `.mapReduce(options, cb, putCb, opt)` - mapReduce on a bucket (see below)
 - `.no(cb)` - see [no](https://github.com/amark/gun/wiki/Snippets-(v0.3.x)#-no)
-- `.recurse(cb, filter)` - recursively navigate bucket graph/tree structure
 - `.value(cb, opt)` - get the node value (no meta)
 - `.valueAt(path, cb, opt)` : get value at the `path` (no meta)
 - `.localFields()` - get list of *local* field names (keys) in the bucket
@@ -80,6 +87,7 @@ Promise enabled methods (ie. ES6 `Promise` or ES7 `async/await`), always prefixe
 
 - `.$fields(opt)` - get fields (ie. property names)
 - `.$live(opt)` - live listener to field updates (no meta)
+- `.$iterate(opts)` - iterate
 - `.$mapReduce(options, putCb, opt)` - map/reduce
 - `.$map(transform, opt)` - map and optionally transform (broken in gun?)
 - `.$no(opt)` - blocks if no data, see [no](https://github.com/amark/gun/wiki/Snippets-(v0.3.x)#-no)
@@ -93,11 +101,7 @@ Feel free to come with suggestions or make a PR :)
 
 **Generators and Streams for superior Async flow control**
 
-Iterator methods must be wrapped in Generators as well. We also want to support typical streams,
-such as `RxJS` and `xstream` (cycle). See [es6-generators-observable-async-flow-control](https://medium.com/javascript-scene/the-hidden-power-of-es6-generators-observable-async-flow-control-cfa4c7f31435#.icez856w3) perhaps using:
-
-- [IxJS](https://github.com/ReactiveX/IxJS)
-
+Iterator methods should be wrapped in Generators (or Observers) as well. We also want to support typical streams, such as `RxJS` and `xstream` (cycle). See [es6-generators-observable-async-flow-control](https://medium.com/javascript-scene/the-hidden-power-of-es6-generators-observable-async-flow-control-cfa4c7f31435#.icez856w3) perhaps using [IxJS](https://github.com/ReactiveX/IxJS)
 
 **WIP**
 

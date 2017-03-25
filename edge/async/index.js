@@ -18,6 +18,8 @@ var _value = require('./value');
 
 var _live = require('./live');
 
+var _iterate = require('./iterate');
+
 var _on = require('./on');
 
 var _no = require('./no');
@@ -27,6 +29,7 @@ var _recurse = require('./recurse');
 var chains = {
   $addFields: _fields.$addFields,
   $addLive: _live.$addLive,
+  $addIterate: _iterate.$addIterate,
   $addMap: _map.$addMap,
   $addMapReduce: _mapReduce.$addMapReduce,
   $addOn: _on.$addOn,
@@ -55,7 +58,7 @@ function add(Gun) {
   });
 }
 
-var allNames = ['fields', 'map', 'mapReduce', 'val', 'value', 'live', 'on', 'no', 'recurse'];
+var allNames = ['fields', 'map', 'mapReduce', 'val', 'value', 'live', 'iterate', 'on', 'no', 'recurse'];
 
 function $addAll(_ref) {
   var Gun = _ref.Gun;

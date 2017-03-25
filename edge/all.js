@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.addValue = exports.addRecurse = exports.addNo = exports.addMapReduce = exports.addLocal = exports.addLive = exports.addInspect = exports.addFields = exports.addEach = exports.addDate = exports.addAsync = undefined;
+exports.addValue = exports.addRecurse = exports.addNo = exports.addMapReduce = exports.addLocal = exports.addIterate = exports.addLive = exports.addInspect = exports.addFields = exports.addEach = exports.addDate = exports.addAsync = undefined;
 exports.add = add;
 
 exports.default = function (Gun) {
@@ -24,6 +24,8 @@ var _inspect = require('./inspect');
 
 var _live = require('./live');
 
+var _iterate = require('./iterate');
+
 var _local = require('./local');
 
 var _mapReduce = require('./map-reduce');
@@ -38,8 +40,9 @@ var _value = require('./value');
 //   addOut
 // } from './out'
 
-// import { addEdge } from './edge'
-
+// import {
+//   addFilter
+// } from './filter'
 var chains = {
   addAsync: _async.$addAll,
   addCount: _count.addCount,
@@ -48,16 +51,14 @@ var chains = {
   addFields: _fields.addFields,
   addInspect: _inspect.addInspect,
   addLive: _live.addLive,
+  addIterate: _iterate.addIterate,
   addLocal: _local.addLocal,
   addMapReduce: _mapReduce.addMapReduce,
   addNo: _no.addNo,
   addRecurse: _recurse.addRecurse,
   addValue: _value.addValue
 };
-// import {
-//   addFilter
-// } from './filter'
-
+// import { addEdge } from './edge'
 
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -81,7 +82,7 @@ function add(Gun) {
 
 var allNames = ['async', 'date', 'each', 'fields',
 // 'filter',
-'inspect', 'live', 'local', 'mapReduce', 'no',
+'inspect', 'live', 'iterate', 'local', 'mapReduce', 'no',
 // 'out',
 'recurse', 'value'];
 
@@ -91,6 +92,7 @@ exports.addEach = _each.addEach;
 exports.addFields = _fields.addFields;
 exports.addInspect = _inspect.addInspect;
 exports.addLive = _live.addLive;
+exports.addIterate = _iterate.addIterate;
 exports.addLocal = _local.addLocal;
 exports.addMapReduce = _mapReduce.addMapReduce;
 exports.addNo = _no.addNo;

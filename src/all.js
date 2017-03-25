@@ -20,11 +20,14 @@ import {
 //   addFilter
 // } from './filter'
 import {
-  addInspect
-} from './inspect'
+  addPrint
+} from './print'
 import {
   addLive
 } from './live'
+import {
+  addIterate
+} from './iterate'
 import {
   addLocal
 } from './local'
@@ -50,8 +53,9 @@ const chains = {
   addDate,
   addEach,
   addFields,
-  addInspect,
+  addPrint,
   addLive,
+  addIterate,
   addLocal,
   addMapReduce,
   addNo,
@@ -81,8 +85,9 @@ const allNames = [
   'each',
   'fields',
   // 'filter',
-  'inspect',
+  'print',
   'live',
+  'iterate',
   'local',
   'mapReduce',
   'no',
@@ -99,6 +104,7 @@ export {
   // addFilter,
   addInspect,
   addLive,
+  addIterate,
   addLocal,
   addMapReduce,
   addNo,
