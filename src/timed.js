@@ -1,4 +1,4 @@
-export function iterate(node, opts = {}) {
+export function timed(node, opts = {}) {
   if (typeof opts === 'function') {
     opts = {
       cb: opts
@@ -10,6 +10,7 @@ export function iterate(node, opts = {}) {
     nextObj,
     nextOpts,
     stopCondition,
+    operation,
     interval = 100,
     num = 0
   } = opts
@@ -31,13 +32,18 @@ export function iterate(node, opts = {}) {
     })
   }
 
+  let defaultOp = (node, obj, opts) => {
+    node.put(obj)
+  }
+
   nextObj = nextObj || defaultNextObj
   nextOpts = nextOpts || defaultNextOpts
   stopCondition = stopCondition || defaultStop
+  operation = operation || defaultOp
 
   setTimeout(() => {
     let obj = Object.assign(nextObj(num, opts))
-    node.put(obj)
+    operation(node, obj, opts)
     if (stopCondition(obj, opts)) {
       cb(num)
     }
@@ -46,11 +52,11 @@ export function iterate(node, opts = {}) {
   }, interval)
 }
 
-export function addIterate({
+export function addTimed({
   chain
 }) {
-  chain.iterate = function (opts) {
-    return iterate(this, opts)
+  chain.timed = function (opts) {
+    return timed(this, opts)
   }
   return chain
 }

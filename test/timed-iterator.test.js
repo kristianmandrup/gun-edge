@@ -8,7 +8,7 @@ import {
   iterate
 } from '../src/iterate'
 
-test('async iterator', async t => {
+test('timed iterator', async t => {
   let name = 'mark'
   let mark = gun.get('mark')
 

@@ -26,8 +26,8 @@ import {
   addLive
 } from './live'
 import {
-  addIterate
-} from './iterate'
+  addTimed
+} from './timed'
 import {
   addLocal
 } from './local'
@@ -55,7 +55,7 @@ const chains = {
   addFields,
   addPrint,
   addLive,
-  addIterate,
+  addTimed,
   addLocal,
   addMapReduce,
   addNo,
@@ -87,7 +87,7 @@ const allNames = [
   // 'filter',
   'print',
   'live',
-  'iterate',
+  'timed',
   'local',
   'mapReduce',
   'no',
@@ -102,9 +102,9 @@ export {
   addEach,
   addFields,
   // addFilter,
-  addInspect,
+  addPrint,
   addLive,
-  addIterate,
+  addTimed,
   addLocal,
   addMapReduce,
   addNo,

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.addValue = exports.addRecurse = exports.addNo = exports.addMapReduce = exports.addLocal = exports.addIterate = exports.addLive = exports.addInspect = exports.addFields = exports.addEach = exports.addDate = exports.addAsync = undefined;
+exports.addValue = exports.addRecurse = exports.addNo = exports.addMapReduce = exports.addLocal = exports.addTimed = exports.addLive = exports.addPrint = exports.addFields = exports.addEach = exports.addDate = exports.addAsync = undefined;
 exports.add = add;
 
 exports.default = function (Gun) {
@@ -20,11 +20,11 @@ var _each = require('./each');
 
 var _fields = require('./fields');
 
-var _inspect = require('./inspect');
+var _print = require('./print');
 
 var _live = require('./live');
 
-var _iterate = require('./iterate');
+var _timed = require('./timed');
 
 var _local = require('./local');
 
@@ -49,9 +49,9 @@ var chains = {
   addDate: _date.addDate,
   addEach: _each.addEach,
   addFields: _fields.addFields,
-  addInspect: _inspect.addInspect,
+  addPrint: _print.addPrint,
   addLive: _live.addLive,
-  addIterate: _iterate.addIterate,
+  addTimed: _timed.addTimed,
   addLocal: _local.addLocal,
   addMapReduce: _mapReduce.addMapReduce,
   addNo: _no.addNo,
@@ -82,7 +82,7 @@ function add(Gun) {
 
 var allNames = ['async', 'date', 'each', 'fields',
 // 'filter',
-'inspect', 'live', 'iterate', 'local', 'mapReduce', 'no',
+'print', 'live', 'timed', 'local', 'mapReduce', 'no',
 // 'out',
 'recurse', 'value'];
 
@@ -90,9 +90,9 @@ exports.addAsync = _async.$addAll;
 exports.addDate = _date.addDate;
 exports.addEach = _each.addEach;
 exports.addFields = _fields.addFields;
-exports.addInspect = _inspect.addInspect;
+exports.addPrint = _print.addPrint;
 exports.addLive = _live.addLive;
-exports.addIterate = _iterate.addIterate;
+exports.addTimed = _timed.addTimed;
 exports.addLocal = _local.addLocal;
 exports.addMapReduce = _mapReduce.addMapReduce;
 exports.addNo = _no.addNo;

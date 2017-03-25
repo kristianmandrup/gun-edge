@@ -3,9 +3,9 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.iterate = iterate;
-exports.addIterate = addIterate;
-function iterate(node) {
+exports.timed = timed;
+exports.addTimed = addTimed;
+function timed(node) {
   var opts = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
   if (typeof opts === 'function') {
@@ -19,6 +19,7 @@ function iterate(node) {
       nextObj = _opts.nextObj,
       nextOpts = _opts.nextOpts,
       stopCondition = _opts.stopCondition,
+      operation = _opts.operation,
       _opts$interval = _opts.interval,
       interval = _opts$interval === undefined ? 100 : _opts$interval,
       _opts$num = _opts.num,
@@ -42,13 +43,18 @@ function iterate(node) {
     });
   };
 
+  var defaultOp = function defaultOp(node, obj, opts) {
+    node.put(obj);
+  };
+
   nextObj = nextObj || defaultNextObj;
   nextOpts = nextOpts || defaultNextOpts;
   stopCondition = stopCondition || defaultStop;
+  operation = operation || defaultOp;
 
   setTimeout(function () {
     var obj = Object.assign(nextObj(num, opts));
-    node.put(obj);
+    operation(node, obj, opts);
     if (stopCondition(obj, opts)) {
       cb(num);
     }
@@ -57,12 +63,12 @@ function iterate(node) {
   }, interval);
 }
 
-function addIterate(_ref2) {
+function addTimed(_ref2) {
   var chain = _ref2.chain;
 
-  chain.iterate = function (opts) {
-    return iterate(this, opts);
+  chain.timed = function (opts) {
+    return timed(this, opts);
   };
   return chain;
 }
-//# sourceMappingURL=iterate.js.map
+//# sourceMappingURL=timed.js.map

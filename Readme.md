@@ -65,8 +65,7 @@ Chain methods available:
 **Iteration**
 
 - `.each()` - see [each](https://github.com/amark/gun/wiki/Snippets-(v0.3.x)#guneach)
-- `.live(cb, opt)` - listen to new values like `on` but without the meta data
-- `.iterate(opts)` - iterate and update a node recursively using a timeout (see `async-iterator.test.js`)
+- `.timed(opts)` - interval based recursive iteration on node  (see `timed-iterator.test.js`)
 - `.mapReduce(options, cb, putCb, opt)` - mapReduce on a bucket (see below)
 - `.recurse(cb, filter)` - recursively navigate bucket graph/tree structure
 
@@ -86,22 +85,36 @@ Chain methods available:
 Promise enabled methods (ie. ES6 `Promise` or ES7 `async/await`), always prefixed with `$`.
 
 - `.$fields(opt)` - get fields (ie. property names)
-- `.$live(opt)` - live listener to field updates (no meta)
 - `.$iterate(opts)` - iterate
 - `.$mapReduce(options, putCb, opt)` - map/reduce
-- `.$map(transform, opt)` - map and optionally transform (broken in gun?)
+
 - `.$no(opt)` - blocks if no data, see [no](https://github.com/amark/gun/wiki/Snippets-(v0.3.x)#-no)
-- `.$on(opt)` - listen to field updates
 - `.$val(opt)` - full value (with meta)
 - `.$value(opt)` - get value (no meta)
 - `.$valueAt(path, opt)` - get value at the `path` (no meta)
 - `.$recurse(filter)` - recursive filter
 
+**Experimental (WIP): Generators and Iterables**
+
+- `.$on(opt)` - listen to field updates
+- `.$live(opt)` - live listener to field updates (no meta)
+- `.$map(transform, opt)` - map and optionally transform (broken in gun?)
+
+Generators can be used as [iterables](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators)
+
+```js
+for (let value of node.$map()) {
+  console.log(await value);
+}
+```
+
+Also see [iterator of promises](https://gist.github.com/domenic/5987999) and [async iterators](https://kriskowal.gitbooks.io/gtor/content/async-iterators.html)
+
 Feel free to come with suggestions or make a PR :)
 
-**Generators and Streams for superior Async flow control**
+**Streams for superior Async flow control**
 
-Iterator methods should be wrapped in Generators (or Observers) as well. We also want to support typical streams, such as `RxJS` and `xstream` (cycle). See [es6-generators-observable-async-flow-control](https://medium.com/javascript-scene/the-hidden-power-of-es6-generators-observable-async-flow-control-cfa4c7f31435#.icez856w3) perhaps using [IxJS](https://github.com/ReactiveX/IxJS)
+We also want to support typical streams, such as `RxJS` and `xstream` (cycle). See [es6-generators-observable-async-flow-control](https://medium.com/javascript-scene/the-hidden-power-of-es6-generators-observable-async-flow-control-cfa4c7f31435#.icez856w3) perhaps using [IxJS](https://github.com/ReactiveX/IxJS)
 
 **WIP**
 
@@ -109,13 +122,15 @@ Iterator methods should be wrapped in Generators (or Observers) as well. We also
 - `.edge(navOpts/data)` or `link`  - for linking nodes and traversing links/edges
 - `.filter(filterFun, cb)` - filter fields
 
-### Useful Gun internal functions
+### Useful internal Gun functions
 
 `Gun.obj.copy(val)` - copy a value
 `Gun.fns.is(data)` - check if Gun node?
 `gun.not((a, b, c) => {})` - ??
 `Gun.text.random()` - random text
 `Gun.obj.map(data, function(val, field){ ... }` - map over a node
+
+Please add more internal Gun functions etc. to this list ;)
 
 ## mapReduce
 

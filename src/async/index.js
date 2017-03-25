@@ -2,9 +2,6 @@ import {
   $addFields
 } from './fields'
 import {
-  $addMap
-} from './map'
-import {
   $addMapReduce
 } from './map-reduce'
 import {
@@ -14,14 +11,8 @@ import {
   $addValue
 } from './value'
 import {
-  $addLive
-} from './live'
-import {
-  $addIterate
-} from './iterate'
-import {
-  $addOn
-} from './on'
+  $addTimed
+} from './timed'
 import {
   $addNo
 } from './no'
@@ -31,15 +22,12 @@ import {
 
 const chains = {
   $addFields,
-  $addLive,
-  $addIterate,
-  $addMap,
   $addMapReduce,
-  $addOn,
   $addNo,
   $addRecurse,
   $addVal,
-  $addValue
+  $addValue,
+  $addTimed
 }
 
 function capitalize(str) {
@@ -59,13 +47,10 @@ export function add(Gun, ...names) {
 
 const allNames = [
   'fields',
-  'map',
   'mapReduce',
   'val',
   'value',
-  'live',
-  'iterate',
-  'on',
+  'timed',
   'no',
   'recurse'
 ]

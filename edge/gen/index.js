@@ -4,30 +4,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.add = add;
-exports.$addAll = $addAll;
+exports.$addGen = $addGen;
 
-var _fields = require('./fields');
+var _live = require('./live');
 
-var _mapReduce = require('./map-reduce');
-
-var _val = require('./val');
-
-var _value = require('./value');
-
-var _timed = require('./timed');
-
-var _no = require('./no');
-
-var _recurse = require('./recurse');
+var _on = require('./on');
 
 var chains = {
-  $addFields: _fields.$addFields,
-  $addMapReduce: _mapReduce.$addMapReduce,
-  $addNo: _no.$addNo,
-  $addRecurse: _recurse.$addRecurse,
-  $addVal: _val.$addVal,
-  $addValue: _value.$addValue,
-  $addTimed: _timed.$addTimed
+  $addLive: _live.$addLive,
+  $addOn: _on.$addOn
 };
 
 function capitalize(str) {
@@ -49,13 +34,13 @@ function add(Gun) {
   });
 }
 
-var allNames = ['fields', 'mapReduce', 'val', 'value', 'timed', 'no', 'recurse'];
+var allNames = ['live', 'on'];
 
-function $addAll(_ref) {
+function $addGen(_ref) {
   var Gun = _ref.Gun;
 
   add.apply(undefined, [Gun].concat(allNames));
 }
 
-exports.default = $addAll;
+exports.default = $addGen;
 //# sourceMappingURL=index.js.map
