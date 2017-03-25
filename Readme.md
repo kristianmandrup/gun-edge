@@ -103,6 +103,29 @@ Also see [iterator of promises](https://gist.github.com/domenic/5987999) and [as
 
 Feel free to come with suggestions or make a PR :)
 
+Some "dark magic" [here](https://github.com/brysgo/graphql-gun/blob/master/index.js#L9) could perhaps provide a way?
+
+```js
+let nextResolve, result, resultValue = {};
+const iterableObj = () => {
+  const nextPromise = new Promise((resolve) => nextResolve = resolve);
+  return { value: resultValue, next: (() => nextPromise) };
+};
+const triggerUpdate = () => {
+  if (nextResolve) {
+    nextResolve(iterableObj())
+  }
+}
+
+return new Promise((resolve) => {
+  // ...
+  chain.on((val) => {
+    // ...
+    triggerUpdate();
+  })
+})
+```
+
 **Streams for superior Async flow control**
 
 Experimental `xstream` support is included, extracted from [cycle-gun](https://github.com/JuniperChicago/cycle-gun)
