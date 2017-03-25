@@ -46,7 +46,6 @@ export function add(Gun, ...names) {
   names.forEach(name => {
     let nameCap = capitalize(name)
     let fun = '$add' + nameCap
-    console.log('fun', fun)
     chains[fun]({
       chain: Gun.chain,
       Gun
@@ -69,7 +68,6 @@ const allNames = [
 export function $addAll({
   Gun
 }) {
-  console.log('$addAll')
   add(Gun, ...allNames)
 }
 

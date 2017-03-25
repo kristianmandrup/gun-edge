@@ -48,7 +48,6 @@ function add(Gun) {
   names.forEach(function (name) {
     var nameCap = capitalize(name);
     var fun = '$add' + nameCap;
-    console.log('fun', fun);
     chains[fun]({
       chain: Gun.chain,
       Gun: Gun
@@ -61,7 +60,6 @@ var allNames = ['fields', 'map', 'mapReduce', 'val', 'value', 'live', 'on', 'no'
 function $addAll(_ref) {
   var Gun = _ref.Gun;
 
-  console.log('$addAll');
   add.apply(undefined, [Gun].concat(allNames));
 }
 

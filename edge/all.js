@@ -71,7 +71,6 @@ function add(Gun) {
   names.forEach(function (name) {
     var nameCap = capitalize(name);
     var fun = 'add' + nameCap;
-    console.log(fun);
     chains[fun]({
       chain: Gun.chain,
       Gun: Gun

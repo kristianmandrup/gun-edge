@@ -103,6 +103,7 @@ Feel free to come with suggestions or make a PR :)
 `Gun.fns.is(data)` - check if Gun node?
 `gun.not((a, b, c) => {})` - ??
 `Gun.text.random()` - random text
+`Gun.obj.map(data, function(val, field){ ... }` - map over a node
 
 ## mapReduce
 
