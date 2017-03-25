@@ -102,10 +102,30 @@ Promise enabled methods (ie. ES6 `Promise` or ES7 `async/await`), always prefixe
 
 Generators can be used as [iterables](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Iterators_and_Generators)
 
+The iterators are currently implemtented as `yield` generator factories, where `condition` by default always returns `true` causing an infinite loop.
+
+```js
+  while (condition(node)) {
+    yield new Promise(function (resolve, reject) {
+      node.on(resolve, opt)
+    })
+  }
+```
+
+The `of` iterator when then continually calls `.next()` on the generator, which will continue from the last `yield` and return the value of the next `yield`. Each yield will return a "generated" promise, which we can then `await` (or `.then()`) on.
+
 ```js
 for (let value of node.$map()) {
   console.log(await value);
 }
+```
+
+Experimental usage:
+
+```js
+import generators from 'gun-edge/edge/gen'
+generators(Gun)
+
 ```
 
 Also see [iterator of promises](https://gist.github.com/domenic/5987999) and [async iterators](https://kriskowal.gitbooks.io/gtor/content/async-iterators.html)

@@ -10,8 +10,11 @@ var _live = require('./live');
 
 var _on = require('./on');
 
+var _map = require('./map');
+
 var chains = {
   $addLive: _live.$addLive,
+  $addMap: _map.$addMap,
   $addOn: _on.$addOn
 };
 
@@ -34,7 +37,7 @@ function add(Gun) {
   });
 }
 
-var allNames = ['live', 'on'];
+var allNames = ['live', 'map', 'on'];
 
 function $addGen(_ref) {
   var Gun = _ref.Gun;

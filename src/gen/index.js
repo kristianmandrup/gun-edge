@@ -4,9 +4,13 @@ import {
 import {
   $addOn
 } from './on'
+import {
+  $addMap
+} from './map'
 
 const chains = {
   $addLive,
+  $addMap,
   $addOn,
 }
 
@@ -27,6 +31,7 @@ export function add(Gun, ...names) {
 
 const allNames = [
   'live',
+  'map',
   'on'
 ]
 
