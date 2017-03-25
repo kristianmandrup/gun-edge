@@ -159,10 +159,9 @@ mark.timed({
 ### Useful internal Gun functions
 
 `Gun.obj.copy(val)` - copy a value
-`Gun.fns.is(data)` - check if Gun node?
-`gun.not((a, b, c) => {})` - ??
-`Gun.text.random()` - random text
 `Gun.obj.map(data, function(val, field){ ... }` - map over a node
+`Gun.fn.is` - check if something is a function
+`Gun.text.random()` - generate random text
 
 Please add more internal Gun functions etc. to this list ;)
 
