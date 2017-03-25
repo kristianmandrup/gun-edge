@@ -94,9 +94,9 @@ Feel free to come with suggestions or make a PR :)
 **TODO**
 
 Iterator methods must be wrapped in Generators as well. We also want to support typical streams,
-such as `RxJS` and `xstream` (cycle)
+such as `RxJS` and `xstream` (cycle). See [es6-generators-observable-async-flow-control](https://medium.com/javascript-scene/the-hidden-power-of-es6-generators-observable-async-flow-control-cfa4c7f31435#.icez856w3)
 
-- Generators and Streams
+- Generators and Streams for superior Async flow control
 
 **WIP**
 
@@ -104,7 +104,7 @@ such as `RxJS` and `xstream` (cycle)
 - `.edge(navOpts/data)` or `link`  - for linking nodes and traversing links/edges
 - `.filter(filterFun, cb)` - filter fields
 
-### Extras
+### Useful Gun internal functions
 
 `Gun.obj.copy(val)` - copy a value
 `Gun.fns.is(data)` - check if Gun node?
