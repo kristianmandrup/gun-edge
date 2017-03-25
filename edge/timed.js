@@ -23,13 +23,15 @@ function timed(node) {
       _opts$interval = _opts.interval,
       interval = _opts$interval === undefined ? 100 : _opts$interval,
       _opts$num = _opts.num,
-      num = _opts$num === undefined ? 0 : _opts$num;
+      num = _opts$num === undefined ? 0 : _opts$num,
+      _opts$maxNum = _opts.maxNum,
+      maxNum = _opts$maxNum === undefined ? 10 : _opts$maxNum;
 
 
   var defaultStop = function defaultStop(_ref, opts) {
     var num = _ref.num;
 
-    return num > 10;
+    return num > maxNum;
   };
   var defaultNextObj = function defaultNextObj(num, opts) {
     return {

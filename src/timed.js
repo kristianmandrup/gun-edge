@@ -12,13 +12,14 @@ export function timed(node, opts = {}) {
     stopCondition,
     operation,
     interval = 100,
-    num = 0
+    num = 0,
+    maxNum = 10
   } = opts
 
   let defaultStop = ({
     num
   }, opts) => {
-    return num > 10
+    return num > maxNum
   }
   let defaultNextObj = (num, opts) => {
     return {
