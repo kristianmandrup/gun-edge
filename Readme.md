@@ -74,7 +74,7 @@ Chain methods available:
 - `.valueAt(path, cb, opt)` : get value at the `path` (no meta)
 - `.localFields()` - get list of *local* field names (keys) in the bucket
 - `.fields(cb)` - return fields to cb
-- `.inspect(label)` - print value to console (no meta)
+- `.print(label)` - print value to console (no meta). Note: You can set `Gun.log`, by default: `console.log`
 
 Promise enabled methods (ie. ES6 `Promise` or ES7 `async/await`), always prefixed with `$`.
 
@@ -91,12 +91,13 @@ Promise enabled methods (ie. ES6 `Promise` or ES7 `async/await`), always prefixe
 
 Feel free to come with suggestions or make a PR :)
 
-**TODO**
+**Generators and Streams for superior Async flow control**
 
 Iterator methods must be wrapped in Generators as well. We also want to support typical streams,
-such as `RxJS` and `xstream` (cycle). See [es6-generators-observable-async-flow-control](https://medium.com/javascript-scene/the-hidden-power-of-es6-generators-observable-async-flow-control-cfa4c7f31435#.icez856w3)
+such as `RxJS` and `xstream` (cycle). See [es6-generators-observable-async-flow-control](https://medium.com/javascript-scene/the-hidden-power-of-es6-generators-observable-async-flow-control-cfa4c7f31435#.icez856w3) perhaps using:
 
-- Generators and Streams for superior Async flow control
+- [IxJS](https://github.com/ReactiveX/IxJS)
+
 
 **WIP**
 

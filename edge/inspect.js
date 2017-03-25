@@ -3,14 +3,14 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.inspect = inspect;
+exports.print = print;
 exports.addInspect = addInspect;
 
 var _value = require('./value');
 
-function inspect(node, label) {
-  (0, _value.value)(node, function (val) {
-    label ? console.log(label, val) : console.log(val);
+function print(node, label, opt, inspector) {
+  node.value(function (val) {
+    label ? inspector(label, val) : inspector(val);
   }, opt);
 }
 
@@ -18,10 +18,11 @@ function addInspect(_ref) {
   var chain = _ref.chain,
       Gun = _ref.Gun;
 
-  // addValue(chain, Gun)
+  (0, _value.addValue)(chain, Gun);
+  var inspector = Gun.log || console.log;
 
-  chain.inspect = function (label) {
-    inspect(this, label);
+  chain.print = function (label, opt) {
+    print(this, label, opt, inspector);
   };
 
   return chain;
