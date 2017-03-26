@@ -96,37 +96,29 @@ Promise enabled methods (ie. ES6 `Promise` or ES7 `async/await`), always prefixe
 - `.$valueAt(path, opt)` - get value at the `path` (no meta)
 - `.$recurse(filter)` - recursive filter
 
-**Generators and Iterables**
+**Generators, Iterables and CSP Channels**
 
-In order to use Generators with Iterators, Gun nodes would need to provide a `next()` method which
-returns an object with `value` and `done` keys.
+We would like to include support for Generators, Iterators, Streams, CSP channels or other mechanisms to make handling async much better and easier...
 
-Also see [iterator of promises](https://gist.github.com/domenic/5987999) and [async iterators](https://kriskowal.gitbooks.io/gtor/content/async-iterators.html)
+- [Promise.each](http://bluebirdjs.com/docs/api/promise.each.html)
+- [iterator of promises](https://gist.github.com/domenic/5987999)
+- [ES proposal: asynchronous iteration](http://2ality.com/2016/10/asynchronous-iteration.html)
+- [generators and channels](https://medium.com/javascript-inside/generators-and-channels-in-javascript-594f2cf9c16e#.fxro1dtfk)
+- [intro to csp](http://lucasmreis.github.io/blog/quick-introduction-to-csp-in-javascript/)
+- [js csp](https://github.com/ubolonton/js-csp)
+- [channels and transducers](https://medium.com/javascript-inside/introduction-into-channels-and-transducers-in-javascript-a1dfd0a09268#.kktbbvz9s)
+- [Taming async with CSP (video)](https://www.youtube.com/watch?v=Kw0w9w-3y4w)
 
-Feel free to come with suggestions or make a PR :)
-
-Some "dark magic" [here](https://github.com/brysgo/graphql-gun/blob/master/index.js#L9) could perhaps provide a way?
+ES proposal:
 
 ```js
-let nextResolve, result, resultValue = {};
-const iterableObj = () => {
-  const nextPromise = new Promise((resolve) => nextResolve = resolve);
-  return { value: resultValue, next: (() => nextPromise) };
-};
-const triggerUpdate = () => {
-  if (nextResolve) {
-    nextResolve(iterableObj())
-  }
+for (const line of readLinesFromFile(fileName)) {
+    console.log(line);
 }
-
-return new Promise((resolve) => {
-  // ...
-  chain.on((val) => {
-    // ...
-    triggerUpdate();
-  })
-})
 ```
+
+_The proposal specifies a new protocol for iteration that works asynchronously:
+Async iterables are marked via `Symbol.asyncIterator`. Method `next()` of an async iterator returns Promises for IteratorResults (vs. IteratorResults directly)_
 
 **Streams for superior Async flow control**
 

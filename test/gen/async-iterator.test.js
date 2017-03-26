@@ -46,9 +46,10 @@ test('async iterator', async t => {
       //   console.log('promised', val)
       // })
 
-      $on(node).then(it => {
-        console.log('n', it.next())
-      })
+      console.log($on(node))
+      // .then(it => {
+      //   console.log('n', it.next())
+      // })
 
       // cols.live((val) => {
       //   console.log('live', val)
