@@ -5,8 +5,8 @@ chain(Gun)
 const gun = Gun();
 
 import {
-  iterate
-} from '../src/iterate'
+  timed
+} from '../src/timed'
 
 test('timed iterator', async t => {
   let name = 'mark'
@@ -14,7 +14,7 @@ test('timed iterator', async t => {
 
   function doLive(node) {
     return new Promise(function (resolve, reject) {
-      iterate(node, resolve)
+      timed(node, resolve)
 
       // Alternative pass options for fine control
       // iterate(node, {

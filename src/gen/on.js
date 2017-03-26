@@ -1,6 +1,7 @@
-export function* $on(node) {
+export function* $on(node, opts) {
   let nextResolve, promise;
   const resolveAndReload = (value) => {
+    console.log('resolveAndReload', value)
     if (nextResolve) nextResolve({
       value,
       next: (() => promise)
@@ -15,7 +16,7 @@ export function* $on(node) {
 export function $addOn({
   chain
 }) {
-  chain.$on = function* () {
+  chain.$on = function* (opts) {
     yield $on(this)
   }
   return chain

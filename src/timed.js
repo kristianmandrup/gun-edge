@@ -11,10 +11,13 @@ export function timed(node, opts = {}) {
     nextOpts,
     stopCondition,
     operation,
+    logging,
     interval = 100,
     num = 0,
     maxNum = 10
   } = opts
+
+  if (logging) console.log('timed', num)
 
   let defaultStop = ({
     num
@@ -46,10 +49,15 @@ export function timed(node, opts = {}) {
     let obj = Object.assign(nextObj(num, opts))
     operation(node, obj, opts)
     if (stopCondition(obj, opts)) {
-      cb(num)
+      if (cb) {
+        cb(num)
+      } else {
+        console.error('timed: Missing cb to stop', opts)
+        // process.exit(1)
+      }
     }
 
-    iterate(node, nextOpts(opts, obj.num))
+    timed(node, nextOpts(opts, obj.num))
   }, interval)
 }
 
