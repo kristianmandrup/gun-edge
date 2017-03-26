@@ -44,6 +44,12 @@ import {
   addRecurse
 } from './recurse'
 import {
+  addPut
+} from './put'
+import {
+  addSet
+} from './set'
+import {
   addValue
 } from './value'
 
@@ -59,7 +65,9 @@ const chains = {
   addLocal,
   addMapReduce,
   addNo,
+  addPut,
   addRecurse,
+  addSet,
   addValue
 }
 
@@ -92,7 +100,9 @@ const allNames = [
   'mapReduce',
   'no',
   // 'out',
+  'put',
   'recurse',
+  'set',
   'value'
 ]
 
@@ -109,7 +119,9 @@ export {
   addMapReduce,
   addNo,
   // addOut,
+  addPut,
   addRecurse,
+  addSet,
   addValue
 }
 

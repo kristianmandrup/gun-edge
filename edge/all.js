@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.addValue = exports.addRecurse = exports.addNo = exports.addMapReduce = exports.addLocal = exports.addTimed = exports.addLive = exports.addPrint = exports.addFields = exports.addEach = exports.addDate = exports.addAsync = undefined;
+exports.addValue = exports.addSet = exports.addRecurse = exports.addPut = exports.addNo = exports.addMapReduce = exports.addLocal = exports.addTimed = exports.addLive = exports.addPrint = exports.addFields = exports.addEach = exports.addDate = exports.addAsync = undefined;
 exports.add = add;
 
 exports.default = function (Gun) {
@@ -34,6 +34,10 @@ var _no = require('./no');
 
 var _recurse = require('./recurse');
 
+var _put = require('./put');
+
+var _set = require('./set');
+
 var _value = require('./value');
 
 // import {
@@ -55,7 +59,9 @@ var chains = {
   addLocal: _local.addLocal,
   addMapReduce: _mapReduce.addMapReduce,
   addNo: _no.addNo,
+  addPut: _put.addPut,
   addRecurse: _recurse.addRecurse,
+  addSet: _set.addSet,
   addValue: _value.addValue
 };
 // import { addEdge } from './edge'
@@ -84,7 +90,7 @@ var allNames = ['async', 'date', 'each', 'fields',
 // 'filter',
 'print', 'live', 'timed', 'local', 'mapReduce', 'no',
 // 'out',
-'recurse', 'value'];
+'put', 'recurse', 'set', 'value'];
 
 exports.addAsync = _async.$addAll;
 exports.addDate = _date.addDate;
@@ -96,6 +102,8 @@ exports.addTimed = _timed.addTimed;
 exports.addLocal = _local.addLocal;
 exports.addMapReduce = _mapReduce.addMapReduce;
 exports.addNo = _no.addNo;
+exports.addPut = _put.addPut;
 exports.addRecurse = _recurse.addRecurse;
+exports.addSet = _set.addSet;
 exports.addValue = _value.addValue;
 //# sourceMappingURL=all.js.map

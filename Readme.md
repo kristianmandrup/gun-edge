@@ -78,6 +78,9 @@ Chain methods available:
 - `.no(cb)` - see [no](https://github.com/amark/gun/wiki/Snippets-(v0.3.x)#-no)
 - `.value(cb, opt)` - get the node value (no meta)
 - `.valueAt(path, cb, opt)` : get value at the `path` (no meta)
+- `.valAt(path, cb, opt)` : get value at the `path`
+- `.setAt(path, cb, opt)` : set value at the `path`
+- `.putAt(path, cb, opt)` : put value at the `path`
 - `.localFields()` - get list of *local* field names (keys) in the bucket
 - `.fields(cb)` - return fields to cb
 - `.print(label)` - print value to console (no meta). Note: You can set `Gun.log`, by default: `console.log`
@@ -87,7 +90,6 @@ Promise enabled methods (ie. ES6 `Promise` or ES7 `async/await`), always prefixe
 - `.$fields(opt)` - get fields (ie. property names)
 - `.$iterate(opts)` - iterate
 - `.$mapReduce(options, putCb, opt)` - map/reduce
-
 - `.$no(opt)` - blocks if no data, see [no](https://github.com/amark/gun/wiki/Snippets-(v0.3.x)#-no)
 - `.$val(opt)` - full value (with meta)
 - `.$value(opt)` - get value (no meta)

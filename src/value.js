@@ -17,6 +17,15 @@ export function valueAt(node, at, cb, opt) {
   }
 }
 
+export function valAt(node, at, cb, opt) {
+  let pathNode = node.path(at)
+  if (pathNode) {
+    pathNode.val(cb, opt)
+  } else {
+    throw new Error(`No such path ${at}`)
+  }
+}
+
 export function addValue({
   chain
 }) {
@@ -26,6 +35,10 @@ export function addValue({
 
   chain.valueAt = function (at, cb, opt) {
     return valueAt(this, at, cb, opt)
+  }
+
+  chain.valAt = function (at, cb, opt) {
+    return valAt(this, at, cb, opt)
   }
 
   return chain

@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.value = value;
 exports.valueAt = valueAt;
+exports.valAt = valAt;
 exports.addValue = addValue;
 
 var _gun = require('gun/gun');
@@ -30,6 +31,15 @@ function valueAt(node, at, cb, opt) {
   }
 }
 
+function valAt(node, at, cb, opt) {
+  var pathNode = node.path(at);
+  if (pathNode) {
+    pathNode.val(cb, opt);
+  } else {
+    throw new Error('No such path ' + at);
+  }
+}
+
 function addValue(_ref) {
   var chain = _ref.chain;
 
@@ -39,6 +49,10 @@ function addValue(_ref) {
 
   chain.valueAt = function (at, cb, opt) {
     return valueAt(this, at, cb, opt);
+  };
+
+  chain.valAt = function (at, cb, opt) {
+    return valAt(this, at, cb, opt);
   };
 
   return chain;
