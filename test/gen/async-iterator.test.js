@@ -42,16 +42,13 @@ test('async iterator', async t => {
         cb: resolve
       })
 
-      iteratorOfPromisesForEach($on(node), (val) => {
-        console.log('promised', val)
-      })
+      // iteratorOfPromisesForEach($on(node), (val) => {
+      //   console.log('promised', val)
+      // })
 
-      // setTimeout(x => {
-      //   let iterator = $on(node)
-      //   for (let x of iterator) {
-      //     console.log('on', x)
-      //   }
-      // }, 300)
+      $on(node).then(it => {
+        console.log('n', it.next())
+      })
 
       // cols.live((val) => {
       //   console.log('live', val)

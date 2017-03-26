@@ -1,15 +1,15 @@
 import Gun from 'gun/gun'
 
-export async function $value(node, opt) {
+export function $value(node, opt) {
   return new Promise(function (resolve, reject) {
     node.value(resolve, opt)
   })
 }
 
-export async function $valueAt(node, at, opt, Gun) {
+export function $valueAt(node, at, opt) {
   let path = node.path(at)
   if (path) {
-    return path.$value(opt, Gun)
+    return path.$value(opt)
   } else {
     throw new Error(`No such path ${at}`)
   }
@@ -26,13 +26,12 @@ export function $addValue({
     chain
   })
 
-  chain.$value = async function (opt) {
-    return await $value(this, opt)
+  chain.$value = function (opt) {
+    return $value(this, opt)
   }
 
-  chain.$valueAt = async function (opt) {
-    return await $valueAt(this, opt)
+  chain.$valueAt = function (opt) {
+    return $valueAt(this, opt)
   }
-
   return chain
 }

@@ -7,9 +7,8 @@ export function $val(node, opt) {
 export function $addVal({
   chain
 }) {
-  chain.$val = async function (opt) {
-    return await $val(this, opt)
+  chain.$val = function (opt) {
+    return $val(this, opt)
   }
-
   return chain
 }
