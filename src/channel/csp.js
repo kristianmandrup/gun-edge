@@ -14,8 +14,6 @@ const csp = require('js-csp')
 export function $csp(node, opts = {}) {
   let id
 
-
-
   let {
     channel,
     buffer,
