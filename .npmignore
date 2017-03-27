@@ -6,5 +6,6 @@ css
 gulpfile
 .babelrc
 sandbox
+play
 examples
 docs

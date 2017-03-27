@@ -11,6 +11,19 @@ gulp.task('build', function () {
     .pipe(gulp.dest('edge'))
 });
 
+gulp.task('build:play', function () {
+  return gulp.src('play/es6/*.js')
+    .pipe(sourcemaps.init())
+    .pipe(babel())
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest('play/es5'))
+});
+
+gulp.task('watch:play', function () {
+  livereload.listen();
+  gulp.watch('play/es6/*.js', ['build:play']);
+});
+
 gulp.task('start', function () {
   return gulp.src('src/**/*.js')
     .pipe(sourcemaps.init())

@@ -45,13 +45,16 @@ test('$csp', async t => {
       let buffer = csp.buffers.fixed(size)
       // let buffer = csp.buffers.sliding(size)
       // let buffer = csp.buffers.dropping(size)
-
       // const promiseCh = csp.promiseChan();
-      const promiseCh = csp.chan(buffer)
 
-      let obs = $csp(node, promiseCh, {
-        log: true,
-        op: 'live'
+      let promiseCh = csp.chan(buffer)
+
+      promiseCh = $csp(node, {
+        // channel: promiseCh,
+        // log: true,
+        op: 'live',
+        // only when node value has a num field
+        condition: (val) => val.num
       })
 
       node.timed({
@@ -61,22 +64,13 @@ test('$csp', async t => {
       })
 
       let num = 0
-
-      let handler = (vnode) => {
-        console.log('TAKEN VALUE', vnode)
-        if (vnode.num) {
-          console.log('has num', vnode.num)
-        }
-      }
-
       let condition = () => num < 5
 
       // Please help improved this!!!
       csp.go(function* () {
         while (condition()) {
-          yield csp.takeAsync(promiseCh, handler)
-          console.log('num', num)
-          num++
+          const value = yield csp.take(promiseCh)
+          console.log('value', value)
         }
       })
     })

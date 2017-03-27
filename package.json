@@ -8,7 +8,9 @@
     "watch": "gulp watch",
     "watch:b": "gulp watch:b",
     "start": "gulp start",
-    "build": "gulp build"
+    "build": "gulp build",
+    "watch:play": "gulp watch:play",
+    "build:play": "gulp build:play"
   },
   "repository": {
     "type": "git",

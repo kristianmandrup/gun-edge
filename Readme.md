@@ -150,9 +150,63 @@ Please add more internal Gun functions to this list for reference ;)
 
 ### CSP Channels: WIP
 
-Also trying to add [CSP channel](https://github.com/ubolonton/js-csp/blob/master/doc/basic.md) support, but can't quite grasp it yet. Please help out :)
+[CSP channel](https://github.com/ubolonton/js-csp/blob/master/doc/basic.md) also included :)
 
 The main idea is outlined [here](http://swannodette.github.io/2013/08/24/es6-generators-and-csp)
+
+CSP learning resources:
+
+- [Introduction To CSP In Javascript](http://lucasmreis.github.io/blog/quick-introduction-to-csp-in-javascript/)
+- [Using CSP As Application Architecture](http://lucasmreis.github.io/blog/using-csp-as-application-architecture/)
+
+
+To start a process just pass a *generator* as a parameter to the `go` function.
+By using the `yield` keyword, you can pause a process, freeing the main thread
+Channels are queues. Whenever a process calls `take` on a channel, it pauses until a value is `put` into that channel.
+
+Processes that put a value on a channel also pause until some other process uses take.
+Because channels are queues, when a process takes from a channel, the value will not be available for other processes to take. One process puts, one process takes.
+A channel can be buffered, which means that, for a given number of puts, a put will not make the process pause.
+
+If the channel has a buffer of size 2, the third put will block the process, until someone takes from it.
+
+See the `test/channel/` folder for some test examples:
+
+```js
+let size = 2
+let buffer = csp.buffers.fixed(size)
+// let buffer = csp.buffers.sliding(size)
+// let buffer = csp.buffers.dropping(size)
+// const promiseCh = csp.promiseChan();
+
+// NOTE: optionally customize channel and buffer used
+// let promiseCh = csp.chan(buffer)
+
+promiseCh = $csp(node, {
+  // channel: promiseCh, // will use fixed(2) buffer by default
+  // log: true,
+  op: 'live',
+  // only put on channel when node value has a num field
+  condition: (val) => val.num
+})
+
+node.timed({
+  maxNum,
+  logging: true,
+  cb: resolve
+})
+
+let num = 0
+let condition = () => num < 5
+
+// Please help improved this!!!
+csp.go(function* () {
+  while (condition()) {
+    const value = yield csp.take(promiseCh)
+    console.log('value', value)
+  }
+})
+```
 
 ## mapReduce
 
@@ -166,6 +220,7 @@ The project includes a `gulpfile` configured to use Babel 6.
 All `/src` files are compiled to `/dist` including source maps.
 
 Scripts:
+
 - start: `npm start`
 - build: `npm run build` (ie. compile)
 - watch and start: `npm run watch`

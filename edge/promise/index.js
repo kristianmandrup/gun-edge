@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.add = add;
-exports.$addAll = $addAll;
+exports.$addPromise = $addPromise;
 
 var _fields = require('./fields');
 
@@ -51,11 +51,11 @@ function add(Gun) {
 
 var allNames = ['fields', 'mapReduce', 'val', 'value', 'timed', 'no', 'recurse'];
 
-function $addAll(_ref) {
+function $addPromise(_ref) {
   var Gun = _ref.Gun;
 
   add.apply(undefined, [Gun].concat(allNames));
 }
 
-exports.default = $addAll;
+exports.default = $addPromise;
 //# sourceMappingURL=index.js.map

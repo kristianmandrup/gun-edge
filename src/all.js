@@ -1,7 +1,8 @@
+import addPromise from './promise'
+import addObservable from './observable'
 import {
-  $addAll as addPromise
-} from './promise'
-
+  addCsp
+} from './channel/csp'
 import {
   addCount
 } from './count'
@@ -58,6 +59,8 @@ import {
 
 const chains = {
   addPromise,
+  addObservable,
+  addCsp,
   addCount,
   addDate,
   addEach,
@@ -93,6 +96,8 @@ export function add(Gun, ...names) {
 
 const allNames = [
   'promise',
+  'observable',
+  'csp',
   'date',
   'each',
   'fields',
@@ -113,6 +118,8 @@ const allNames = [
 
 export {
   addPromise,
+  addObservable,
+  addCsp,
   addDate,
   addEach,
   addFields,

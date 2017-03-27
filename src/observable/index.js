@@ -21,7 +21,7 @@ function capitalize(str) {
 export function add(Gun, ...names) {
   names.forEach(name => {
     let nameCap = capitalize(name)
-    let fun = '$add' + nameCap
+    let fun = 'add' + nameCap
     chains[fun]({
       chain: Gun.chain,
       Gun
@@ -31,14 +31,14 @@ export function add(Gun, ...names) {
 
 const allNames = [
   'rx',
-  'xstream',
+  'xStream',
   'zen'
 ]
 
-export function $addAll({
+export function $addObservable({
   Gun
 }) {
   add(Gun, ...allNames)
 }
 
-export default $addAll
+export default $addObservable

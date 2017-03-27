@@ -55,10 +55,10 @@ const allNames = [
   'recurse'
 ]
 
-export function $addAll({
+export function $addPromise({
   Gun
 }) {
   add(Gun, ...allNames)
 }
 
-export default $addAll
+export default $addPromise

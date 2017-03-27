@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.add = add;
-exports.$addAll = $addAll;
+exports.$addObservable = $addObservable;
 
 var _rx = require('./rx');
 
@@ -29,7 +29,7 @@ function add(Gun) {
 
   names.forEach(function (name) {
     var nameCap = capitalize(name);
-    var fun = '$add' + nameCap;
+    var fun = 'add' + nameCap;
     chains[fun]({
       chain: Gun.chain,
       Gun: Gun
@@ -37,13 +37,13 @@ function add(Gun) {
   });
 }
 
-var allNames = ['rx', 'xstream', 'zen'];
+var allNames = ['rx', 'xStream', 'zen'];
 
-function $addAll(_ref) {
+function $addObservable(_ref) {
   var Gun = _ref.Gun;
 
   add.apply(undefined, [Gun].concat(allNames));
 }
 
-exports.default = $addAll;
+exports.default = $addObservable;
 //# sourceMappingURL=index.js.map
