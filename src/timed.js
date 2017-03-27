@@ -1,4 +1,20 @@
+import Gun from 'gun/gun';
+
 export function timed(node, opts = {}) {
+  let id, name
+  node.val(data => {
+    id = Gun.node.soul(data)
+    name = opts.name || id || 'unknown'
+  })
+
+  console.log('TIMED', opts)
+
+  const log = function (...args) {
+    if (opts.log || opts.logging) {
+      console.log('timed:', name, ...args)
+    }
+  }
+
   if (typeof opts === 'function') {
     opts = {
       cb: opts
@@ -17,7 +33,7 @@ export function timed(node, opts = {}) {
     maxNum = 10
   } = opts
 
-  if (logging) console.log('timed', num)
+  log('timed', opts)
 
   let defaultStop = ({
     num
@@ -37,6 +53,7 @@ export function timed(node, opts = {}) {
   }
 
   let defaultOp = (node, obj, opts) => {
+    log('put', obj)
     node.put(obj)
   }
 

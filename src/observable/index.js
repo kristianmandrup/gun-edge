@@ -1,17 +1,17 @@
 import {
-  $addLive
-} from './live'
+  addRx
+} from './rx'
 import {
-  $addOn
-} from './on'
+  addXStream
+} from './xstream'
 import {
-  $addMap
-} from './map'
+  addZen
+} from './zen'
 
 const chains = {
-  $addLive,
-  $addMap,
-  $addOn,
+  addXStream,
+  addRx,
+  addZen
 }
 
 function capitalize(str) {
@@ -30,15 +30,15 @@ export function add(Gun, ...names) {
 }
 
 const allNames = [
-  'live',
-  'map',
-  'on'
+  'rx',
+  'xstream',
+  'zen'
 ]
 
-export function $addGen({
+export function $addAll({
   Gun
 }) {
   add(Gun, ...allNames)
 }
 
-export default $addGen
+export default $addAll

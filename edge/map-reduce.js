@@ -3,6 +3,15 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _keys = require('babel-runtime/core-js/object/keys');
+
+var _keys2 = _interopRequireDefault(_keys);
+
+var _assign = require('babel-runtime/core-js/object/assign');
+
+var _assign2 = _interopRequireDefault(_assign);
+
 exports.addMapReduce = addMapReduce;
 exports.mapReduce = mapReduce;
 
@@ -28,7 +37,7 @@ function mapReduce(bucket) {
   var opt = arguments[4];
 
   bucket.fields(function (allFields) {
-    options = Object.assign(options, {
+    options = (0, _assign2.default)(options, {
       allFields: allFields
     });
     doMapReduce(bucket, options, cb, putCb, opt);
@@ -139,7 +148,7 @@ function doMapReduce(bucket, _ref2, cb, putCb, opt) {
   }
 
   function defaultFilterBucket(bucket, ctx) {
-    var deleteKeys = Object.keys(ctx.filteredFields);
+    var deleteKeys = (0, _keys2.default)(ctx.filteredFields);
     if (deleteKeys.length > 0) {
       log('FILTER', deleteKeys);
       var deleteObj = deleteKeys.reduce(function (obj, key) {
@@ -153,7 +162,7 @@ function doMapReduce(bucket, _ref2, cb, putCb, opt) {
 
   function defaultUpdateBucket(bucket, ctx) {
     log('UPDATE', props);
-    var props = Object.assign(ctx.oldProps, ctx.newProps);
+    var props = (0, _assign2.default)(ctx.oldProps, ctx.newProps);
     ctx.saveChanges(bucket, props, ctx);
   }
 
@@ -243,7 +252,7 @@ function doMapReduce(bucket, _ref2, cb, putCb, opt) {
       if (doFilter) {
         ctx.filteredFields[field] = true;
       } else {
-        ctx.newProps = Object.assign(ctx.newProps, newObj);
+        ctx.newProps = (0, _assign2.default)(ctx.newProps, newObj);
         ctx.newProps[newKey] = newValue;
 
         ctx.oldProps[field] = oldValue;

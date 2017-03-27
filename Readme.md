@@ -83,9 +83,12 @@ Chain methods available:
 - `.putAt(path, cb, opt)` : put value at the `path`
 - `.localFields()` - get list of *local* field names (keys) in the bucket
 - `.fields(cb)` - return fields to cb
+- `.soul()` - return the soul (id) of the node
 - `.print(label)` - print value to console (no meta). Note: You can set `Gun.log`, by default: `console.log`
 
-Promise enabled methods (ie. ES6 `Promise` or ES7 `async/await`), always prefixed with `$`.
+**Promise enabled methods**
+
+ES6 `Promise` or ES7 `async/await`), always prefixed with `$`
 
 - `.$fields(opt)` - get fields (ie. property names)
 - `.$iterate(opts)` - iterate
@@ -95,60 +98,34 @@ Promise enabled methods (ie. ES6 `Promise` or ES7 `async/await`), always prefixe
 - `.$value(opt)` - get value (no meta)
 - `.$valueAt(path, opt)` - get value at the `path` (no meta)
 - `.$recurse(filter)` - recursive filter
+- `.$timed(opts)` - timed recursion
 
-**Generators, Iterables and CSP Channels**
+**Observable streams for superior Async flow control**
 
-We would like to include support for Generators, Iterators, Streams, CSP channels or other mechanisms to make handling async much better and easier...
+Observable methods are also (currently) prefixed with `$`
 
-- [Promise.each](http://bluebirdjs.com/docs/api/promise.each.html)
-- [iterator of promises](https://gist.github.com/domenic/5987999)
-- [ES proposal: asynchronous iteration](http://2ality.com/2016/10/asynchronous-iteration.html)
-- [generators and channels](https://medium.com/javascript-inside/generators-and-channels-in-javascript-594f2cf9c16e#.fxro1dtfk)
-- [intro to csp](http://lucasmreis.github.io/blog/quick-introduction-to-csp-in-javascript/)
-- [js csp](https://github.com/ubolonton/js-csp)
-- [channels and transducers](https://medium.com/javascript-inside/introduction-into-channels-and-transducers-in-javascript-a1dfd0a09268#.kktbbvz9s)
-- [Taming async with CSP (video)](https://www.youtube.com/watch?v=Kw0w9w-3y4w)
+[Observable](https://tc39.github.io/proposal-observable/) stream support is included for:
+- [Rx](http://reactivex.io/rxjs/)
+- [Zen](https://github.com/zenparsing/zen-observable)
+- [Xstream](http://staltz.com/xstream/) for [Cycle.js](cycle.js.org)
 
-ES proposal:
+Example: Rx.js
 
 ```js
-for (const line of readLinesFromFile(fileName)) {
-    console.log(line);
+// optional
+let options = {
+  log: true,
+  op: 'live'
 }
-```
 
-_The proposal specifies a new protocol for iteration that works asynchronously:
-Async iterables are marked via `Symbol.asyncIterator`. Method `next()` of an async iterator returns Promises for IteratorResults (vs. IteratorResults directly)_
+// or simply $rx(node) or even node.$rx()
+let obs = $rx(node, options)
 
-**Streams for superior Async flow control**
-
-Experimental `xstream` support is included, extracted from [cycle-gun](https://github.com/JuniperChicago/cycle-gun)
-
-```js
-import { addStream } from 'gun-edge/edge/xstream'
-addStream(Gun.chain)
-
-let mark = gun.get('mark)
-mark.stream()
-  .map((event) => {
-    console.log('received', {
-      event
-    })
+let subscription = obs
+  .subscribe(x => {
+    console.log({received: x})
   })
-
-// will count from 0 to 5 at 200ms interval, each time making
-// a new put with current counter value
-mark.timed({
-  max: 5,
-  interval: 200
-})
 ```
-
-**WIP**
-
-- `.out(navOpts, cb)` - traverse edge (WIP)
-- `.edge(navOpts/data)` or `link`  - for linking nodes and traversing links/edges
-- `.filter(filterFun, cb)` - filter fields
 
 ### Useful internal Gun functions
 
@@ -156,8 +133,26 @@ mark.timed({
 `Gun.obj.map(data, function(val, field){ ... }` - map over a node
 `Gun.fn.is` - check if something is a function
 `Gun.text.random()` - generate random text
+`Gun.is.node.soul(data)` - test if data has a soul (ie. is a Gun node)
+`Gun.node.soul(data)` - return id of Gun node
 
-Please add more internal Gun functions etc. to this list ;)
+Please add more internal Gun functions to this list for reference ;)
+
+## Useful chain methods
+
+`node.back()` - go one level back/up in the graph
+
+**WIP**
+
+- `.out(navOpts, cb)` - traverse edge (WIP)
+- `.edge(navOpts/data)` or `link`  - for linking nodes and traversing links/edges
+- `.filter(filterFun, cb)` - filter fields
+
+### CSP Channels: WIP
+
+Also trying to add [CSP channel](https://github.com/ubolonton/js-csp/blob/master/doc/basic.md) support, but can't quite grasp it yet. Please help out :)
+
+The main idea is outlined [here](http://swannodette.github.io/2013/08/24/es6-generators-and-csp)
 
 ## mapReduce
 

@@ -3,7 +3,6 @@ import {
 } from '../timed'
 
 export function $timed(node, opts = {}) {
-  console.log('$timed', node)
   return new Promise(function (resolve, reject) {
     opts = Object.assign(opts, {
       cb: resolve

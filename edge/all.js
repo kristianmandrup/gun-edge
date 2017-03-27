@@ -3,14 +3,14 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.addValue = exports.addSet = exports.addRecurse = exports.addPut = exports.addNo = exports.addMapReduce = exports.addLocal = exports.addTimed = exports.addLive = exports.addPrint = exports.addFields = exports.addEach = exports.addDate = exports.addAsync = undefined;
+exports.addValue = exports.addSet = exports.addRecurse = exports.addPut = exports.addNo = exports.addMapReduce = exports.addLocal = exports.addTimed = exports.addLive = exports.addPrint = exports.addFields = exports.addEach = exports.addDate = exports.addPromise = undefined;
 exports.add = add;
 
 exports.default = function (Gun) {
   return add.apply(undefined, [Gun].concat(allNames));
 };
 
-var _async = require('./async');
+var _promise = require('./promise');
 
 var _count = require('./count');
 
@@ -38,17 +38,14 @@ var _put = require('./put');
 
 var _set = require('./set');
 
+var _soul = require('./soul');
+
 var _value = require('./value');
 
-// import {
-//   addOut
-// } from './out'
+// import { addEdge } from './edge'
 
-// import {
-//   addFilter
-// } from './filter'
 var chains = {
-  addAsync: _async.$addAll,
+  addPromise: _promise.$addAll,
   addCount: _count.addCount,
   addDate: _date.addDate,
   addEach: _each.addEach,
@@ -62,9 +59,17 @@ var chains = {
   addPut: _put.addPut,
   addRecurse: _recurse.addRecurse,
   addSet: _set.addSet,
+  addSoul: _soul.addSoul,
   addValue: _value.addValue
 };
-// import { addEdge } from './edge'
+// import {
+//   addOut
+// } from './out'
+
+// import {
+//   addFilter
+// } from './filter'
+
 
 function capitalize(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -86,13 +91,13 @@ function add(Gun) {
   return Gun;
 }
 
-var allNames = ['async', 'date', 'each', 'fields',
+var allNames = ['promise', 'date', 'each', 'fields',
 // 'filter',
 'print', 'live', 'timed', 'local', 'mapReduce', 'no',
 // 'out',
-'put', 'recurse', 'set', 'value'];
+'put', 'recurse', 'set', 'soul', 'value'];
 
-exports.addAsync = _async.$addAll;
+exports.addPromise = _promise.$addAll;
 exports.addDate = _date.addDate;
 exports.addEach = _each.addEach;
 exports.addFields = _fields.addFields;

@@ -1,6 +1,6 @@
 import {
-  $addAll as addAsync
-} from './async'
+  $addAll as addPromise
+} from './promise'
 
 import {
   addCount
@@ -50,11 +50,14 @@ import {
   addSet
 } from './set'
 import {
+  addSoul
+} from './soul'
+import {
   addValue
 } from './value'
 
 const chains = {
-  addAsync,
+  addPromise,
   addCount,
   addDate,
   addEach,
@@ -68,6 +71,7 @@ const chains = {
   addPut,
   addRecurse,
   addSet,
+  addSoul,
   addValue
 }
 
@@ -88,7 +92,7 @@ export function add(Gun, ...names) {
 }
 
 const allNames = [
-  'async',
+  'promise',
   'date',
   'each',
   'fields',
@@ -103,11 +107,12 @@ const allNames = [
   'put',
   'recurse',
   'set',
+  'soul',
   'value'
 ]
 
 export {
-  addAsync,
+  addPromise,
   addDate,
   addEach,
   addFields,
